@@ -1,7 +1,6 @@
-#include<iostream>
+#include<bits/std++.h>
 using namespace std;
-int main()
-{
-    cout << "Itz TTs";
-    return 0;
+int main() {
+        
+return 0;
 }
