@@ -199,6 +199,41 @@ void loadHighScore() {
     }
 }
 
+void displayPauseMenu() {
+    system("cls"); // Clear the screen
+    int consoleWidth = 70; // Adjust as needed
+    int consoleHeight = 20; // Adjust as needed
+    string separator(consoleWidth, '=');
+    string pauseText = "GAME PAUSED";
+    string option1 = "(R) Restart";
+    string option2 = "(C) Resume";
+    string option3 = "(E) Exit";
+
+    int pausePadding = (consoleWidth - pauseText.size()) / 2;
+    int option1Padding = (consoleWidth - option1.size()) / 2;
+    int option2Padding = (consoleWidth - option2.size()) / 2;
+    int option3Padding = (consoleWidth - option3.size()) / 2;
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
+
+    cout << "\n";
+    cout << separator << endl; // Top border
+    for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
+        cout << endl; // Add vertical padding
+    }
+
+    cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
+    cout << endl; // Add spacing between the title and options
+    cout << string(option1Padding, ' ') << option1 << endl;
+    cout << string(option2Padding, ' ') << option2 << endl;
+    cout << string(option3Padding, ' ') << option3 << endl;
+
+    cout << separator << endl; // Bottom border
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
 void gameLoop() {
     system("cls"); // Clear the terminal before starting the game
 
@@ -269,25 +304,31 @@ void gameLoop() {
                             }
                             break;
                         case 27: // ESC key
-                            system("cls"); // Clear the screen
-                            int consoleWidth = 70; // Adjust as needed
-                            int consoleHeight = 20; // Adjust as needed
-                            string pauseText = "GAME PAUSED";
-                            string continueText = "Press any key to continue";
-
-                            int pausePadding = (consoleWidth - pauseText.size()) / 2;
-                            int continuePadding = (consoleWidth - continueText.size()) / 2;
-
-                            for (int i = 0; i < consoleHeight / 2 - 1; ++i) {
-                                cout << endl; // Add vertical padding
+                            bool inPauseMenu = true;
+                            while (inPauseMenu) {
+                                displayPauseMenu();
+                                char choice = _getch();
+                                switch (tolower(choice)) {
+                                    case 'r': // Restart
+                                        resetGameState();
+                                        initialize();
+                                        system("cls"); // Clear the screen after choosing restart
+                                        inPauseMenu = false;
+                                        break;
+                                    case 'c': // Resume
+                                        system("cls"); // Clear the screen after choosing resume
+                                        inPauseMenu = false;
+                                        break;
+                                    case 'e': // Exit
+                                        system("cls"); // Clear the screen before exiting
+                                        exit(0); // Exit the game
+                                        break;
+                                    default:
+                                        cout << "\nInvalid input. Please try again.\n";
+                                        Sleep(1000); // Pause for 1 second to show the error
+                                        break;
+                                }
                             }
-
-                            cout << string(pausePadding, ' ') << pauseText << endl;
-                            cout << endl; // Add spacing between the two lines
-                            cout << string(continuePadding, ' ') << continueText << endl;
-
-                            _getch();
-                            system("cls"); // Clear the screen again after resuming
                             break;
                     }
                 }
@@ -319,23 +360,24 @@ void gameLoop() {
     system("cls");
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
 
-    cout << "\n\n\n";
-    cout << string(30, ' ') << "=========================" << endl;
-    cout << string(30, ' ') << "       GAME OVER         " << endl;
-    cout << string(30, ' ') << "=========================" << endl;
-    cout << "\n";
-    cout << string(30, ' ') << "Your Score: " << score << endl;
+    int consoleWidth = 70; // Adjust to match the screen width
+    string border(consoleWidth, '=');
+    string gameOverText = "GAME OVER";
+    string scoreText = "Your Score: " + to_string(score);
+    string highScoreText = (score > highScore) ? "New High Score: " + to_string(score) + "!" : "High Score: " + to_string(highScore);
+    string exitText = "Press any key to exit...";
 
-    if (score > highScore) {
-        highScore = score;
-        saveHighScore();
-        cout << string(30, ' ') << "New High Score: " << highScore << "!" << endl;
-    } else {
-        cout << string(30, ' ') << "High Score: " << highScore << endl;
-    }
-
+    cout << "\n\n";
+    cout << border << endl;
+    cout << string((consoleWidth - gameOverText.size()) / 2, ' ') << gameOverText << endl;
+    cout << border << endl;
     cout << "\n";
-    cout << string(30, ' ') << "Press any key to exit..." << endl;
+    cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
+    cout << string((consoleWidth - highScoreText.size()) / 2, ' ') << highScoreText << endl;
+    cout << "\n";
+    cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl;
+    cout << border << endl; // Add a border line after "Press any key to exit..."
+
     _getch(); // Wait for user input
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
@@ -344,22 +386,22 @@ void gameLoop() {
 void displayHomeWindow() {
     system("cls"); // Clear the console
 
-    int consoleWidth = 70; // Increased width for better alignment
+    int consoleWidth = 70; // Adjust as needed
+    string separator(consoleWidth, '=');
     string title = "Welcome to Tetris!";
     string option1 = "(Q) Quickie Mode";
     string option2 = "(A) Advanced Mode";
     string option3 = "(S) Show Scoreboard";
-    string separator(consoleWidth, '=');
 
     int padding = (consoleWidth - title.size()) / 2;
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
-    cout << "\n\n";
-    cout << string(padding, ' ') << separator << endl;
+    cout << "\n";
+    cout << separator << endl; // Top border
     cout << string(padding, ' ') << title << endl;
-    cout << string(padding, ' ') << separator << endl;
+    cout << separator << endl; // Below title border
     cout << "\n";
 
     padding = (consoleWidth - option1.size()) / 2;
@@ -372,6 +414,7 @@ void displayHomeWindow() {
     cout << string(padding, ' ') << option3 << endl;
 
     cout << "\n";
+    cout << separator << endl; // Bottom border
     cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
@@ -455,14 +498,15 @@ int main() {
         char mode;
         cin >> mode;
 
-        if (mode == 'a' || mode == 'A') {
+        if (tolower(mode) == 'a') {
             startGame(true);
-        } else if (mode == 'q' || mode == 'Q') {
+        } else if (tolower(mode) == 'q') {
             startGame(false);
-        } else if (mode == 's' || mode == 'S') {
+        } else if (tolower(mode) == 's') {
             showScoreboard();
         } else {
-            break; // Exit the game
+            cout << "\nInvalid input. Please select a valid option.\n";
+            Sleep(1000); // Pause for 1 second to show the error
         }
     }
 
