@@ -7,6 +7,7 @@
 #include <chrono> // For timing
 #include <string>
 #include <fstream>
+#include <algorithm> // Include for sort
 
 using namespace std;
 using namespace std::chrono;
@@ -18,7 +19,7 @@ int score = 0;
 int level = 1;
 int linesCleared = 0;
 string username;
-int highScore = 0;
+int highestScore = 0;
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominos = {
@@ -183,10 +184,97 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
     WriteConsoleOutputA(hConsole, buffer, bufferSize, bufferCoord, &writeRegion);
 }
 
+void saveLeaderboard(const vector<pair<string, int>>& leaderboard) {
+    ofstream file("leaderboard.txt");
+    if (file.is_open()) {
+        for (const auto& entry : leaderboard) {
+            file << entry.first << " " << entry.second << endl;
+        }
+        file.close();
+    }
+}
+
+vector<pair<string, int>> loadLeaderboard() {
+    ifstream file("leaderboard.txt");
+    vector<pair<string, int>> leaderboard;
+    if (file.is_open()) {
+        string name;
+        int score;
+        while (file >> name >> score) {
+            leaderboard.push_back({name, score});
+        }
+        file.close();
+    }
+    return leaderboard;
+}
+
+void loadHighestScore() {
+    vector<pair<string, int>> leaderboard = loadLeaderboard();
+    if (!leaderboard.empty()) {
+        highestScore = leaderboard[0].second; // The highest score is the first entry in the sorted leaderboard
+        username = leaderboard[0].first;     // The username of the highest scorer
+    }
+}
+
+void updateLeaderboard(const string& username, int score) {
+    vector<pair<string, int>> leaderboard = loadLeaderboard();
+    leaderboard.push_back({username, score});
+
+    // Sort leaderboard in descending order by score
+    sort(leaderboard.begin(), leaderboard.end(), [](const auto& a, const auto& b) {
+        return a.second > b.second;
+    });
+
+    // Keep only the top 10 scores
+    if (leaderboard.size() > 10) {
+        leaderboard.pop_back();
+    }
+
+    saveLeaderboard(leaderboard);
+}
+
+void displayLeaderboard() {
+    system("cls"); // Clear the console
+    vector<pair<string, int>> leaderboard = loadLeaderboard();
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+
+    cout << "\n\n";
+    int consoleWidth = 50; // Adjust as needed
+    string title = "Leaderboard";
+    string separator(consoleWidth, '=');
+    int padding = (consoleWidth - title.size()) / 2;
+
+    cout << string(padding, ' ') << separator << endl;
+    cout << string(padding, ' ') << title << endl;
+    cout << string(padding, ' ') << separator << endl;
+
+    if (leaderboard.empty()) {
+        cout << "\n";
+        string noGamesMessage = "No games have been played in the Advanced Mode.";
+        padding = (consoleWidth - noGamesMessage.size()) / 2;
+        cout << string(padding, ' ') << noGamesMessage << endl;
+    } else {
+        cout << "\n";
+        for (int i = 0; i < leaderboard.size(); ++i) {
+            string entry = to_string(i + 1) + ". " + leaderboard[i].first + " - " + to_string(leaderboard[i].second);
+            padding = (consoleWidth - entry.size()) / 2;
+            cout << string(padding, ' ') << entry << endl;
+        }
+    }
+
+    cout << "\n";
+    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to return...";
+    _getch(); // Wait for user input
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
 void saveHighScore() {
     ofstream file("highscore.txt");
     if (file.is_open()) {
-        file << username << " " << highScore << endl;
+        file << username << " " << highestScore << endl;
         file.close();
     }
 }
@@ -194,7 +282,7 @@ void saveHighScore() {
 void loadHighScore() {
     ifstream file("highscore.txt");
     if (file.is_open()) {
-        file >> username >> highScore;
+        file >> username >> highestScore;
         file.close();
     }
 }
@@ -364,7 +452,7 @@ void gameLoop() {
     string border(consoleWidth, '=');
     string gameOverText = "GAME OVER";
     string scoreText = "Your Score: " + to_string(score);
-    string highScoreText = (score > highScore) ? "New High Score: " + to_string(score) + "!" : "High Score: " + to_string(highScore);
+    string highScoreText = (score > highestScore) ? "New Highest Score: " + to_string(score) + "!" : "Highest Score: " + to_string(highestScore);
     string exitText = "Press any key to exit...";
 
     cout << "\n\n";
@@ -391,7 +479,7 @@ void displayHomeWindow() {
     string title = "Welcome to Tetris!";
     string option1 = "(Q) Quickie Mode";
     string option2 = "(A) Advanced Mode";
-    string option3 = "(S) Show Scoreboard";
+    string option3 = "(L) Leaderboard"; // Change option to 'L'
 
     int padding = (consoleWidth - title.size()) / 2;
 
@@ -420,66 +508,22 @@ void displayHomeWindow() {
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
-void showScoreboard() {
-    system("cls"); // Clear the console
-    ifstream file("highscore.txt");
-    vector<pair<string, int>> scores;
-
-    if (file.is_open()) {
-        string name;
-        int score;
-        while (file >> name >> score) {
-            scores.push_back({name, score});
-        }
-        file.close();
-    }
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
-
-    cout << "\n\n";
-    int consoleWidth = 50; // Adjust as needed
-    string title = "Scoreboard";
-    string separator(consoleWidth, '=');
-    int padding = (consoleWidth - title.size()) / 2;
-
-    cout << string(padding, ' ') << separator << endl;
-    cout << string(padding, ' ') << title << endl;
-    cout << string(padding, ' ') << separator << endl;
-
-    if (scores.empty()) {
-        cout << "\n";
-        string noGamesMessage = "No games have been played in the Advanced Mode.";
-        padding = (consoleWidth - noGamesMessage.size()) / 2;
-        cout << string(padding, ' ') << noGamesMessage << endl;
-    } else {
-        cout << "\n";
-        for (int i = 0; i < scores.size() && i < 10; ++i) {
-            string entry = to_string(i + 1) + ". " + scores[i].first + " - " + to_string(scores[i].second);
-            padding = (consoleWidth - entry.size()) / 2;
-            cout << string(padding, ' ') << entry << endl;
-        }
-    }
-
-    cout << "\n";
-    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to return...";
-    _getch(); // Wait for user input
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-}
-
 void startGame(bool advancedMode) {
     resetGameState(); // Reset the game state
 
     if (advancedMode) {
         cout << "Enter your username: ";
         cin >> username;
-        loadHighScore();
-        cout << "Current High Score: " << highScore << endl;
+        loadHighestScore(); // Load the highest score from the leaderboard
+        cout << "Current Highest Score: " << highestScore << " by " << username << endl;
     }
 
     initialize();
     gameLoop();
+
+    if (advancedMode) {
+        updateLeaderboard(username, score); // Update leaderboard with the current user's score
+    }
 
     char choice;
     cout << "Do you want to play again? (y/n): ";
@@ -498,15 +542,20 @@ int main() {
         char mode;
         cin >> mode;
 
-        if (tolower(mode) == 'a') {
-            startGame(true);
-        } else if (tolower(mode) == 'q') {
-            startGame(false);
-        } else if (tolower(mode) == 's') {
-            showScoreboard();
-        } else {
-            cout << "\nInvalid input. Please select a valid option.\n";
-            Sleep(1000); // Pause for 1 second to show the error
+        switch (tolower(mode)) { // Handle input case-insensitively
+            case 'a':
+                startGame(true);
+                break;
+            case 'q':
+                startGame(false);
+                break;
+            case 'l': // Change option to 'L'
+                displayLeaderboard();
+                break;
+            default:
+                cout << "\nInvalid input. Please select a valid option.\n";
+                Sleep(1000); // Pause for 1 second to show the error
+                break;
         }
     }
 
