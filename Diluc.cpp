@@ -275,6 +275,9 @@ void gameLoop() {
                             string pauseText = "GAME PAUSED";
                             string continueText = "Press any key to continue";
 
+                            HANDLE hConsolePause = GetStdHandle(STD_OUTPUT_HANDLE);
+                            SetConsoleTextAttribute(hConsolePause, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
+
                             int pausePadding = (consoleWidth - pauseText.size()) / 2;
                             int continuePadding = (consoleWidth - continueText.size()) / 2;
 
@@ -288,6 +291,7 @@ void gameLoop() {
 
                             _getch();
                             system("cls"); // Clear the screen again after resuming
+                            SetConsoleTextAttribute(hConsolePause, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
                             break;
                     }
                 }
@@ -344,35 +348,30 @@ void gameLoop() {
 void displayHomeWindow() {
     system("cls"); // Clear the console
 
-    int consoleWidth = 70; // Increased width for better alignment
+    int consoleWidth = 70; // Adjust width for alignment
     string title = "Welcome to Tetris!";
-    string option1 = "(Q) Quickie Mode";
-    string option2 = "(A) Advanced Mode";
-    string option3 = "(S) Show Scoreboard";
+    string option1 = "Q - Quickie Mode";
+    string option2 = "A - Advanced Mode";
+    string option3 = "S - Show Scoreboard";
     string separator(consoleWidth, '=');
 
-    int padding = (consoleWidth - title.size()) / 2;
+    int titlePadding = (consoleWidth - title.size()) / 2;
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
     cout << "\n\n";
-    cout << string(padding, ' ') << separator << endl;
-    cout << string(padding, ' ') << title << endl;
-    cout << string(padding, ' ') << separator << endl;
+    cout << string(titlePadding, ' ') << title << endl; // Center-align title
+    cout << separator << endl;
     cout << "\n";
 
-    padding = (consoleWidth - option1.size()) / 2;
-    cout << string(padding, ' ') << option1 << endl;
-
-    padding = (consoleWidth - option2.size()) / 2;
-    cout << string(padding, ' ') << option2 << endl;
-
-    padding = (consoleWidth - option3.size()) / 2;
-    cout << string(padding, ' ') << option3 << endl;
+    // Left-align modes
+    cout << option1 << endl;
+    cout << option2 << endl;
+    cout << option3 << endl;
 
     cout << "\n";
-    cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
+    cout << "Select your option: ";
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
