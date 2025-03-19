@@ -108,8 +108,25 @@ void rotateTetromino() {
             newShape[j][currentTetromino.shape.size() - 1 - i] = currentTetromino.shape[i][j];
         }
     }
+    // Check for collisions and adjust position if necessary
     if (!checkCollision(currentTetromino.x, currentTetromino.y, newShape)) {
         currentTetromino.shape = newShape;
+    } else {
+        // Try shifting left
+        if (!checkCollision(currentTetromino.x - 1, currentTetromino.y, newShape)) {
+            currentTetromino.x--;
+            currentTetromino.shape = newShape;
+        }
+        // Try shifting right
+        else if (!checkCollision(currentTetromino.x + 1, currentTetromino.y, newShape)) {
+            currentTetromino.x++;
+            currentTetromino.shape = newShape;
+        }
+        // Try shifting down
+        else if (!checkCollision(currentTetromino.x, currentTetromino.y + 1, newShape)) {
+            currentTetromino.y++;
+            currentTetromino.shape = newShape;
+        }
     }
 }
 
