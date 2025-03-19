@@ -170,8 +170,8 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
         buffer[(height + 1) * bufferSize.X + i].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
     }
 
-    // Display score and level
-    string scoreStr = "Score: " + to_string(score) + "  Level: " + to_string(level);
+    // Display score only
+    string scoreStr = "Score: " + to_string(score);
     for (int i = 0; i < scoreStr.size(); ++i) {
         buffer[(height + 2) * bufferSize.X + i].Char.AsciiChar = scoreStr[i];
         buffer[(height + 2) * bufferSize.X + i].Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Teal color
@@ -179,7 +179,7 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
 
     // Write buffer to console
     COORD bufferCoord = { 0, 0 };
-    SMALL_RECT writeRegion = { 0, 0, bufferSize.X - 1, bufferSize.Y - 1 };
+    SMALL_RECT writeRegion = { 0, 0, static_cast<SHORT>(bufferSize.X - 1), static_cast<SHORT>(bufferSize.Y - 1) };
     WriteConsoleOutputA(hConsole, buffer, bufferSize, bufferCoord, &writeRegion);
 }
 
@@ -202,7 +202,7 @@ void loadHighScore() {
 void gameLoop() {
     system("cls"); // Clear the terminal before starting the game
 
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); // Declare only once
     COORD bufferSize = { width + 2, height + 3 };
     CHAR_INFO buffer[bufferSize.X * bufferSize.Y];
 
@@ -259,8 +259,8 @@ void gameLoop() {
                             if (!checkCollision(currentTetromino.x, currentTetromino.y + 1, currentTetromino.shape)) {
                                 currentTetromino.y++;
                             }
-                    
-                                                    case 'w':
+                            break;
+                        case 'w':
                             rotateTetromino();
                             break;
                         case ' ':
@@ -269,8 +269,25 @@ void gameLoop() {
                             }
                             break;
                         case 27: // ESC key
-                            cout << "Game Paused. Press any key to continue..." << endl;
+                            system("cls"); // Clear the screen
+                            int consoleWidth = 70; // Adjust as needed
+                            int consoleHeight = 20; // Adjust as needed
+                            string pauseText = "GAME PAUSED";
+                            string continueText = "Press any key to continue";
+
+                            int pausePadding = (consoleWidth - pauseText.size()) / 2;
+                            int continuePadding = (consoleWidth - continueText.size()) / 2;
+
+                            for (int i = 0; i < consoleHeight / 2 - 1; ++i) {
+                                cout << endl; // Add vertical padding
+                            }
+
+                            cout << string(pausePadding, ' ') << pauseText << endl;
+                            cout << endl; // Add spacing between the two lines
+                            cout << string(continuePadding, ' ') << continueText << endl;
+
                             _getch();
+                            system("cls"); // Clear the screen again after resuming
                             break;
                     }
                 }
@@ -289,15 +306,6 @@ void gameLoop() {
                     currentTetromino.y = 0;
                     currentTetromino.color = tetrominoColors[index];
                     if (checkCollision(currentTetromino.x, currentTetromino.y, currentTetromino.shape)) {
-                        system("cls"); // Clear the screen before showing "Game Over"
-                        cout << "Game Over!" << endl;
-                        if (score > highScore) {
-                            highScore = score;
-                            saveHighScore();
-                            cout << "New High Score: " << highScore << endl;
-                        }
-                        cout << "Press any key to exit..." << endl;
-                        _getch(); // Wait for user input
                         isGameOver = true;
                     }
                 }
@@ -306,12 +314,37 @@ void gameLoop() {
             draw(hConsole, bufferSize, buffer);
         }
     }
+
+    // Smooth transition to Game Over screen
+    system("cls");
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
+
+    cout << "\n\n\n";
+    cout << string(30, ' ') << "=========================" << endl;
+    cout << string(30, ' ') << "       GAME OVER         " << endl;
+    cout << string(30, ' ') << "=========================" << endl;
+    cout << "\n";
+    cout << string(30, ' ') << "Your Score: " << score << endl;
+
+    if (score > highScore) {
+        highScore = score;
+        saveHighScore();
+        cout << string(30, ' ') << "New High Score: " << highScore << "!" << endl;
+    } else {
+        cout << string(30, ' ') << "High Score: " << highScore << endl;
+    }
+
+    cout << "\n";
+    cout << string(30, ' ') << "Press any key to exit..." << endl;
+    _getch(); // Wait for user input
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
 void displayHomeWindow() {
     system("cls"); // Clear the console
 
-    int consoleWidth = 50; // Adjust as needed
+    int consoleWidth = 70; // Increased width for better alignment
     string title = "Welcome to Tetris!";
     string option1 = "(Q) Quickie Mode";
     string option2 = "(A) Advanced Mode";
@@ -339,7 +372,7 @@ void displayHomeWindow() {
     cout << string(padding, ' ') << option3 << endl;
 
     cout << "\n";
-    cout << string((consoleWidth - 20) / 2, ' ') << "Select your option: ";
+    cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
