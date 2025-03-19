@@ -199,6 +199,24 @@ void loadHighScore() {
     }
 }
 
+// Function to get console width dynamically
+int getConsoleWidth() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+        return csbi.srWindow.Right - csbi.srWindow.Left + 1;
+    }
+    return 80; // Default width if unable to fetch
+}
+
+// Function to get console height dynamically
+int getConsoleHeight() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+        return csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    }
+    return 25; // Default height if unable to fetch
+}
+
 void gameLoop() {
     system("cls"); // Clear the terminal before starting the game
 
@@ -270,27 +288,46 @@ void gameLoop() {
                             break;
                         case 27: // ESC key
                             system("cls"); // Clear the screen
-                            int consoleWidth = 70; // Adjust as needed
-                            int consoleHeight = 20; // Adjust as needed
-                            string pauseText = "GAME PAUSED";
-                            string continueText = "Press any key to continue";
+                            int consoleWidth = getConsoleWidth(); // Dynamically get console width
+                            int consoleHeight = getConsoleHeight(); // Dynamically get console height
+                            string pauseText = "  G A M E   P A U S E D  ";
+                            string resumeText = "1 - Resume";
+                            string restartText = "2 - Restart";
+                            string quitText = "3 - Quit";
+                            string separator(consoleWidth, '=');
 
                             HANDLE hConsolePause = GetStdHandle(STD_OUTPUT_HANDLE);
                             SetConsoleTextAttribute(hConsolePause, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
 
                             int pausePadding = (consoleWidth - pauseText.size()) / 2;
-                            int continuePadding = (consoleWidth - continueText.size()) / 2;
+                            int resumePadding = (consoleWidth - resumeText.size()) / 2;
+                            int restartPadding = (consoleWidth - restartText.size()) / 2;
+                            int quitPadding = (consoleWidth - quitText.size()) / 2;
 
-                            for (int i = 0; i < consoleHeight / 2 - 1; ++i) {
+                            for (int i = 0; i < consoleHeight / 2 - 4; ++i) {
                                 cout << endl; // Add vertical padding
                             }
 
                             cout << string(pausePadding, ' ') << pauseText << endl;
-                            cout << endl; // Add spacing between the two lines
-                            cout << string(continuePadding, ' ') << continueText << endl;
+                            cout << separator << endl; // Full-width separator
+                            cout << endl; // Add spacing
+                            cout << string(resumePadding, ' ') << resumeText << endl;
+                            cout << string(restartPadding, ' ') << restartText << endl;
+                            cout << string(quitPadding, ' ') << quitText << endl;
 
-                            _getch();
-                            system("cls"); // Clear the screen again after resuming
+                            char pauseChoice;
+                            cin >> pauseChoice;
+
+                            if (pauseChoice == '1') {
+                                system("cls"); // Resume game
+                            } else if (pauseChoice == '2') {
+                                resetGameState();
+                                initialize();
+                                system("cls");
+                            } else if (pauseChoice == '3') {
+                                exit(0); // Quit game
+                            }
+
                             SetConsoleTextAttribute(hConsolePause, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
                             break;
                     }
@@ -321,25 +358,38 @@ void gameLoop() {
 
     // Smooth transition to Game Over screen
     system("cls");
+
+    int consoleWidth = getConsoleWidth(); // Dynamically get console width
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
 
+    string gameOverText = "G A M E   O V E R";
+    string separator(consoleWidth, '=');
+    string scoreText = "Your Score: " + to_string(score);
+    string highScoreText = "High Score: " + to_string(highScore);
+    string newHighScoreText = "New High Score: " + to_string(highScore) + "!";
+    string exitText = "Press any key to exit...";
+    int gameOverPadding = (consoleWidth - gameOverText.size()) / 2;
+    int scorePadding = (consoleWidth - scoreText.size()) / 2;
+    int highScorePadding = (consoleWidth - highScoreText.size()) / 2;
+    int exitPadding = (consoleWidth - exitText.size()) / 2;
+
     cout << "\n\n\n";
-    cout << string(30, ' ') << "=========================" << endl;
-    cout << string(30, ' ') << "       GAME OVER         " << endl;
-    cout << string(30, ' ') << "=========================" << endl;
-    cout << "\n";
-    cout << string(30, ' ') << "Your Score: " << score << endl;
+    cout << string(gameOverPadding, ' ') << separator << endl;
+    cout << string(gameOverPadding, ' ') << gameOverText << endl;
+    cout << string(gameOverPadding, ' ') << separator << endl;
+    cout << "\n\n";
+    cout << string(scorePadding, ' ') << scoreText << endl;
 
     if (score > highScore) {
+        cout << string(scorePadding, ' ') << newHighScoreText << endl;
         highScore = score;
         saveHighScore();
-        cout << string(30, ' ') << "New High Score: " << highScore << "!" << endl;
     } else {
-        cout << string(30, ' ') << "High Score: " << highScore << endl;
+        cout << string(highScorePadding, ' ') << highScoreText << endl;
     }
 
-    cout << "\n";
-    cout << string(30, ' ') << "Press any key to exit..." << endl;
+    cout << "\n\n";
+    cout << string(exitPadding, ' ') << exitText << endl;
     _getch(); // Wait for user input
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
@@ -348,30 +398,31 @@ void gameLoop() {
 void displayHomeWindow() {
     system("cls"); // Clear the console
 
-    int consoleWidth = 70; // Adjust width for alignment
-    string title = "Welcome to Tetris!";
+    int consoleWidth = getConsoleWidth(); // Dynamically get console width
+    string title = "WELCOME TO TETRIS!";
     string option1 = "Q - Quickie Mode";
     string option2 = "A - Advanced Mode";
     string option3 = "S - Show Scoreboard";
     string separator(consoleWidth, '=');
 
     int titlePadding = (consoleWidth - title.size()) / 2;
+    int optionPadding = (consoleWidth - option1.size()) / 2;
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
-    cout << "\n\n";
+    cout << "\n\n\n";
     cout << string(titlePadding, ' ') << title << endl; // Center-align title
     cout << separator << endl;
-    cout << "\n";
+    cout << "\n\n";
 
-    // Left-align modes
-    cout << option1 << endl;
-    cout << option2 << endl;
-    cout << option3 << endl;
+    // Center-align options
+    cout << string(optionPadding, ' ') << option1 << endl;
+    cout << string(optionPadding, ' ') << option2 << endl;
+    cout << string(optionPadding, ' ') << option3 << endl;
 
-    cout << "\n";
-    cout << "Select your option: ";
+    cout << "\n\n";
+    cout << string(optionPadding, ' ') << "Select your option: ";
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
@@ -446,6 +497,7 @@ void startGame(bool advancedMode) {
 }
 
 int main() {
+    system("mode con: cols=100 lines=30"); // Set console width and height
     srand(time(0)); // Initialize random seed
 
     while (true) {
