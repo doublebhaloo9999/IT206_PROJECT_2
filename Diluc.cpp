@@ -7,7 +7,6 @@
 #include <chrono> // For timing
 #include <string>
 #include <fstream>
-#include <algorithm> // Include for sort
 
 using namespace std;
 using namespace std::chrono;
@@ -19,7 +18,7 @@ int score = 0;
 int level = 1;
 int linesCleared = 0;
 string username;
-int highestScore = 0;
+int highScore = 0;
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominos = {
@@ -184,97 +183,10 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
     WriteConsoleOutputA(hConsole, buffer, bufferSize, bufferCoord, &writeRegion);
 }
 
-void saveLeaderboard(const vector<pair<string, int>>& leaderboard) {
-    ofstream file("leaderboard.txt");
-    if (file.is_open()) {
-        for (const auto& entry : leaderboard) {
-            file << entry.first << " " << entry.second << endl;
-        }
-        file.close();
-    }
-}
-
-vector<pair<string, int>> loadLeaderboard() {
-    ifstream file("leaderboard.txt");
-    vector<pair<string, int>> leaderboard;
-    if (file.is_open()) {
-        string name;
-        int score;
-        while (file >> name >> score) {
-            leaderboard.push_back({name, score});
-        }
-        file.close();
-    }
-    return leaderboard;
-}
-
-void loadHighestScore() {
-    vector<pair<string, int>> leaderboard = loadLeaderboard();
-    if (!leaderboard.empty()) {
-        highestScore = leaderboard[0].second; // The highest score is the first entry in the sorted leaderboard
-        username = leaderboard[0].first;     // The username of the highest scorer
-    }
-}
-
-void updateLeaderboard(const string& username, int score) {
-    vector<pair<string, int>> leaderboard = loadLeaderboard();
-    leaderboard.push_back({username, score});
-
-    // Sort leaderboard in descending order by score
-    sort(leaderboard.begin(), leaderboard.end(), [](const auto& a, const auto& b) {
-        return a.second > b.second;
-    });
-
-    // Keep only the top 10 scores
-    if (leaderboard.size() > 10) {
-        leaderboard.pop_back();
-    }
-
-    saveLeaderboard(leaderboard);
-}
-
-void displayLeaderboard() {
-    system("cls"); // Clear the console
-    vector<pair<string, int>> leaderboard = loadLeaderboard();
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
-
-    cout << "\n\n";
-    int consoleWidth = 50; // Adjust as needed
-    string title = "Leaderboard";
-    string separator(consoleWidth, '=');
-    int padding = (consoleWidth - title.size()) / 2;
-
-    cout << string(padding, ' ') << separator << endl;
-    cout << string(padding, ' ') << title << endl;
-    cout << string(padding, ' ') << separator << endl;
-
-    if (leaderboard.empty()) {
-        cout << "\n";
-        string noGamesMessage = "No games have been played in the Advanced Mode.";
-        padding = (consoleWidth - noGamesMessage.size()) / 2;
-        cout << string(padding, ' ') << noGamesMessage << endl;
-    } else {
-        cout << "\n";
-        for (int i = 0; i < leaderboard.size(); ++i) {
-            string entry = to_string(i + 1) + ". " + leaderboard[i].first + " - " + to_string(leaderboard[i].second);
-            padding = (consoleWidth - entry.size()) / 2;
-            cout << string(padding, ' ') << entry << endl;
-        }
-    }
-
-    cout << "\n";
-    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to return...";
-    _getch(); // Wait for user input
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-}
-
 void saveHighScore() {
     ofstream file("highscore.txt");
     if (file.is_open()) {
-        file << username << " " << highestScore << endl;
+        file << username << " " << highScore << endl;
         file.close();
     }
 }
@@ -282,44 +194,27 @@ void saveHighScore() {
 void loadHighScore() {
     ifstream file("highscore.txt");
     if (file.is_open()) {
-        file >> username >> highestScore;
+        file >> username >> highScore;
         file.close();
     }
 }
 
-void displayPauseMenu() {
-    system("cls"); // Clear the screen
-    int consoleWidth = 70; // Adjust as needed
-    int consoleHeight = 20; // Adjust as needed
-    string separator(consoleWidth, '=');
-    string pauseText = "GAME PAUSED";
-    string option1 = "(R) Restart";
-    string option2 = "(C) Resume";
-    string option3 = "(E) Exit";
-
-    int pausePadding = (consoleWidth - pauseText.size()) / 2;
-    int option1Padding = (consoleWidth - option1.size()) / 2;
-    int option2Padding = (consoleWidth - option2.size()) / 2;
-    int option3Padding = (consoleWidth - option3.size()) / 2;
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
-
-    cout << "\n";
-    cout << separator << endl; // Top border
-    for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
-        cout << endl; // Add vertical padding
+// Function to get console width dynamically
+int getConsoleWidth() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+        return csbi.srWindow.Right - csbi.srWindow.Left + 1;
     }
+    return 80; // Default width if unable to fetch
+}
 
-    cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
-    cout << endl; // Add spacing between the title and options
-    cout << string(option1Padding, ' ') << option1 << endl;
-    cout << string(option2Padding, ' ') << option2 << endl;
-    cout << string(option3Padding, ' ') << option3 << endl;
-
-    cout << separator << endl; // Bottom border
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+// Function to get console height dynamically
+int getConsoleHeight() {
+    CONSOLE_SCREEN_BUFFER_INFO csbi;
+    if (GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi)) {
+        return csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+    }
+    return 25; // Default height if unable to fetch
 }
 
 void gameLoop() {
@@ -392,31 +287,48 @@ void gameLoop() {
                             }
                             break;
                         case 27: // ESC key
-                            bool inPauseMenu = true;
-                            while (inPauseMenu) {
-                                displayPauseMenu();
-                                char choice = _getch();
-                                switch (tolower(choice)) {
-                                    case 'r': // Restart
-                                        resetGameState();
-                                        initialize();
-                                        system("cls"); // Clear the screen after choosing restart
-                                        inPauseMenu = false;
-                                        break;
-                                    case 'c': // Resume
-                                        system("cls"); // Clear the screen after choosing resume
-                                        inPauseMenu = false;
-                                        break;
-                                    case 'e': // Exit
-                                        system("cls"); // Clear the screen before exiting
-                                        exit(0); // Exit the game
-                                        break;
-                                    default:
-                                        cout << "\nInvalid input. Please try again.\n";
-                                        Sleep(1000); // Pause for 1 second to show the error
-                                        break;
-                                }
+                            system("cls"); // Clear the screen
+                            int consoleWidth = getConsoleWidth(); // Dynamically get console width
+                            int consoleHeight = getConsoleHeight(); // Dynamically get console height
+                            string pauseText = "  G A M E   P A U S E D  ";
+                            string resumeText = "1 - Resume";
+                            string restartText = "2 - Restart";
+                            string quitText = "3 - Quit";
+                            string separator(consoleWidth, '=');
+
+                            HANDLE hConsolePause = GetStdHandle(STD_OUTPUT_HANDLE);
+                            SetConsoleTextAttribute(hConsolePause, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
+
+                            int pausePadding = (consoleWidth - pauseText.size()) / 2;
+                            int resumePadding = (consoleWidth - resumeText.size()) / 2;
+                            int restartPadding = (consoleWidth - restartText.size()) / 2;
+                            int quitPadding = (consoleWidth - quitText.size()) / 2;
+
+                            for (int i = 0; i < consoleHeight / 2 - 4; ++i) {
+                                cout << endl; // Add vertical padding
                             }
+
+                            cout << string(pausePadding, ' ') << pauseText << endl;
+                            cout << separator << endl; // Full-width separator
+                            cout << endl; // Add spacing
+                            cout << string(resumePadding, ' ') << resumeText << endl;
+                            cout << string(restartPadding, ' ') << restartText << endl;
+                            cout << string(quitPadding, ' ') << quitText << endl;
+
+                            char pauseChoice;
+                            cin >> pauseChoice;
+
+                            if (pauseChoice == '1') {
+                                system("cls"); // Resume game
+                            } else if (pauseChoice == '2') {
+                                resetGameState();
+                                initialize();
+                                system("cls");
+                            } else if (pauseChoice == '3') {
+                                exit(0); // Quit game
+                            }
+
+                            SetConsoleTextAttribute(hConsolePause, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
                             break;
                     }
                 }
@@ -446,26 +358,38 @@ void gameLoop() {
 
     // Smooth transition to Game Over screen
     system("cls");
+
+    int consoleWidth = getConsoleWidth(); // Dynamically get console width
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
 
-    int consoleWidth = 70; // Adjust to match the screen width
-    string border(consoleWidth, '=');
-    string gameOverText = "GAME OVER";
+    string gameOverText = "G A M E   O V E R";
+    string separator(consoleWidth, '=');
     string scoreText = "Your Score: " + to_string(score);
-    string highScoreText = (score > highestScore) ? "New Highest Score: " + to_string(score) + "!" : "Highest Score: " + to_string(highestScore);
+    string highScoreText = "High Score: " + to_string(highScore);
+    string newHighScoreText = "New High Score: " + to_string(highScore) + "!";
     string exitText = "Press any key to exit...";
+    int gameOverPadding = (consoleWidth - gameOverText.size()) / 2;
+    int scorePadding = (consoleWidth - scoreText.size()) / 2;
+    int highScorePadding = (consoleWidth - highScoreText.size()) / 2;
+    int exitPadding = (consoleWidth - exitText.size()) / 2;
+
+    cout << "\n\n\n";
+    cout << string(gameOverPadding, ' ') << separator << endl;
+    cout << string(gameOverPadding, ' ') << gameOverText << endl;
+    cout << string(gameOverPadding, ' ') << separator << endl;
+    cout << "\n\n";
+    cout << string(scorePadding, ' ') << scoreText << endl;
+
+    if (score > highScore) {
+        cout << string(scorePadding, ' ') << newHighScoreText << endl;
+        highScore = score;
+        saveHighScore();
+    } else {
+        cout << string(highScorePadding, ' ') << highScoreText << endl;
+    }
 
     cout << "\n\n";
-    cout << border << endl;
-    cout << string((consoleWidth - gameOverText.size()) / 2, ' ') << gameOverText << endl;
-    cout << border << endl;
-    cout << "\n";
-    cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
-    cout << string((consoleWidth - highScoreText.size()) / 2, ' ') << highScoreText << endl;
-    cout << "\n";
-    cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl;
-    cout << border << endl; // Add a border line after "Press any key to exit..."
-
+    cout << string(exitPadding, ' ') << exitText << endl;
     _getch(); // Wait for user input
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
@@ -474,36 +398,79 @@ void gameLoop() {
 void displayHomeWindow() {
     system("cls"); // Clear the console
 
-    int consoleWidth = 70; // Adjust as needed
+    int consoleWidth = getConsoleWidth(); // Dynamically get console width
+    string title = "WELCOME TO TETRIS!";
+    string option1 = "Q - Quickie Mode";
+    string option2 = "A - Advanced Mode";
+    string option3 = "S - Show Scoreboard";
     string separator(consoleWidth, '=');
-    string title = "Welcome to Tetris!";
-    string option1 = "(Q) Quickie Mode";
-    string option2 = "(A) Advanced Mode";
-    string option3 = "(L) Leaderboard"; // Change option to 'L'
 
-    int padding = (consoleWidth - title.size()) / 2;
+    int titlePadding = (consoleWidth - title.size()) / 2;
+    int optionPadding = (consoleWidth - option1.size()) / 2;
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
-    cout << "\n";
-    cout << separator << endl; // Top border
+    cout << "\n\n\n";
+    cout << string(titlePadding, ' ') << title << endl; // Center-align title
+    cout << separator << endl;
+    cout << "\n\n";
+
+    // Center-align options
+    cout << string(optionPadding, ' ') << option1 << endl;
+    cout << string(optionPadding, ' ') << option2 << endl;
+    cout << string(optionPadding, ' ') << option3 << endl;
+
+    cout << "\n\n";
+    cout << string(optionPadding, ' ') << "Select your option: ";
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
+void showScoreboard() {
+    system("cls"); // Clear the console
+    ifstream file("highscore.txt");
+    vector<pair<string, int>> scores;
+
+    if (file.is_open()) {
+        string name;
+        int score;
+        while (file >> name >> score) {
+            scores.push_back({name, score});
+        }
+        file.close();
+    }
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+
+    cout << "\n\n";
+    int consoleWidth = 50; // Adjust as needed
+    string title = "Scoreboard";
+    string separator(consoleWidth, '=');
+    int padding = (consoleWidth - title.size()) / 2;
+
+    cout << string(padding, ' ') << separator << endl;
     cout << string(padding, ' ') << title << endl;
-    cout << separator << endl; // Below title border
+    cout << string(padding, ' ') << separator << endl;
+
+    if (scores.empty()) {
+        cout << "\n";
+        string noGamesMessage = "No games have been played in the Advanced Mode.";
+        padding = (consoleWidth - noGamesMessage.size()) / 2;
+        cout << string(padding, ' ') << noGamesMessage << endl;
+    } else {
+        cout << "\n";
+        for (int i = 0; i < scores.size() && i < 10; ++i) {
+            string entry = to_string(i + 1) + ". " + scores[i].first + " - " + to_string(scores[i].second);
+            padding = (consoleWidth - entry.size()) / 2;
+            cout << string(padding, ' ') << entry << endl;
+        }
+    }
+
     cout << "\n";
-
-    padding = (consoleWidth - option1.size()) / 2;
-    cout << string(padding, ' ') << option1 << endl;
-
-    padding = (consoleWidth - option2.size()) / 2;
-    cout << string(padding, ' ') << option2 << endl;
-
-    padding = (consoleWidth - option3.size()) / 2;
-    cout << string(padding, ' ') << option3 << endl;
-
-    cout << "\n";
-    cout << separator << endl; // Bottom border
-    cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
+    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to return...";
+    _getch(); // Wait for user input
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
@@ -514,16 +481,12 @@ void startGame(bool advancedMode) {
     if (advancedMode) {
         cout << "Enter your username: ";
         cin >> username;
-        loadHighestScore(); // Load the highest score from the leaderboard
-        cout << "Current Highest Score: " << highestScore << " by " << username << endl;
+        loadHighScore();
+        cout << "Current High Score: " << highScore << endl;
     }
 
     initialize();
     gameLoop();
-
-    if (advancedMode) {
-        updateLeaderboard(username, score); // Update leaderboard with the current user's score
-    }
 
     char choice;
     cout << "Do you want to play again? (y/n): ";
@@ -534,6 +497,7 @@ void startGame(bool advancedMode) {
 }
 
 int main() {
+    system("mode con: cols=100 lines=30"); // Set console width and height
     srand(time(0)); // Initialize random seed
 
     while (true) {
@@ -542,20 +506,14 @@ int main() {
         char mode;
         cin >> mode;
 
-        switch (tolower(mode)) { // Handle input case-insensitively
-            case 'a':
-                startGame(true);
-                break;
-            case 'q':
-                startGame(false);
-                break;
-            case 'l': // Change option to 'L'
-                displayLeaderboard();
-                break;
-            default:
-                cout << "\nInvalid input. Please select a valid option.\n";
-                Sleep(1000); // Pause for 1 second to show the error
-                break;
+        if (mode == 'a' || mode == 'A') {
+            startGame(true);
+        } else if (mode == 'q' || mode == 'Q') {
+            startGame(false);
+        } else if (mode == 's' || mode == 'S') {
+            showScoreboard();
+        } else {
+            break; // Exit the game
         }
     }
 
