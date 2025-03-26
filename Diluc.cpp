@@ -7,6 +7,7 @@
 #include <chrono> // For timing
 #include <string>
 #include <fstream>
+#include <thread> // For cross-platform sleep
 
 using namespace std;
 using namespace std::chrono;
@@ -48,6 +49,30 @@ struct Tetromino {
 };
 
 Tetromino currentTetromino;
+
+// Cross-platform sleep function
+void sleep_ms(int milliseconds) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+}
+
+// Cross-platform clear screen function
+void clearScreen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
+
+// Replace Windows-specific color handling with a no-op for non-Windows systems
+void setConsoleColor(int color) {
+#ifdef _WIN32
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, color);
+#else
+    // No-op for non-Windows systems
+#endif
+}
 
 void resetGameState() {
     grid = vector<vector<int>>(height, vector<int>(width, 0));
@@ -218,7 +243,7 @@ int getConsoleHeight() {
 }
 
 void gameLoop() {
-    system("cls"); // Clear the terminal before starting the game
+    clearScreen(); // Use cross-platform clear screen
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); // Declare only once
     COORD bufferSize = { width + 2, height + 3 };
@@ -287,48 +312,31 @@ void gameLoop() {
                             }
                             break;
                         case 27: // ESC key
-                            system("cls"); // Clear the screen
-                            int consoleWidth = getConsoleWidth(); // Dynamically get console width
-                            int consoleHeight = getConsoleHeight(); // Dynamically get console height
-                            string pauseText = "  G A M E   P A U S E D  ";
-                            string resumeText = "1 - Resume";
-                            string restartText = "2 - Restart";
-                            string quitText = "3 - Quit";
-                            string separator(consoleWidth, '=');
-
-                            HANDLE hConsolePause = GetStdHandle(STD_OUTPUT_HANDLE);
-                            SetConsoleTextAttribute(hConsolePause, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
-
-                            int pausePadding = (consoleWidth - pauseText.size()) / 2;
-                            int resumePadding = (consoleWidth - resumeText.size()) / 2;
-                            int restartPadding = (consoleWidth - restartText.size()) / 2;
-                            int quitPadding = (consoleWidth - quitText.size()) / 2;
-
-                            for (int i = 0; i < consoleHeight / 2 - 4; ++i) {
-                                cout << endl; // Add vertical padding
+                            bool inPauseMenu = true;
+                            while (inPauseMenu) {
+                                displayPauseMenu();
+                                char choice = _getch();
+                                switch (tolower(choice)) {
+                                    case 'r': // Restart
+                                        resetGameState();
+                                        initialize();
+                                        clearScreen(); // Clear the screen after choosing restart
+                                        inPauseMenu = false;
+                                        break;
+                                    case 'c': // Resume
+                                        clearScreen(); // Clear the screen after choosing resume
+                                        inPauseMenu = false;
+                                        break;
+                                    case 'e': // Exit
+                                        clearScreen(); // Clear the screen before exiting
+                                        exit(0); // Exit the game
+                                        break;
+                                    default:
+                                        cout << "\nInvalid input. Please try again.\n";
+                                        sleep_ms(1000); // Pause for 1 second to show the error
+                                        break;
+                                }
                             }
-
-                            cout << string(pausePadding, ' ') << pauseText << endl;
-                            cout << separator << endl; // Full-width separator
-                            cout << endl; // Add spacing
-                            cout << string(resumePadding, ' ') << resumeText << endl;
-                            cout << string(restartPadding, ' ') << restartText << endl;
-                            cout << string(quitPadding, ' ') << quitText << endl;
-
-                            char pauseChoice;
-                            cin >> pauseChoice;
-
-                            if (pauseChoice == '1') {
-                                system("cls"); // Resume game
-                            } else if (pauseChoice == '2') {
-                                resetGameState();
-                                initialize();
-                                system("cls");
-                            } else if (pauseChoice == '3') {
-                                exit(0); // Quit game
-                            }
-
-                            SetConsoleTextAttribute(hConsolePause, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
                             break;
                     }
                 }
@@ -357,10 +365,10 @@ void gameLoop() {
     }
 
     // Smooth transition to Game Over screen
-    system("cls");
+    clearScreen(); // Use cross-platform clear screen
 
     int consoleWidth = getConsoleWidth(); // Dynamically get console width
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
+    setConsoleColor(FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
 
     string gameOverText = "G A M E   O V E R";
     string separator(consoleWidth, '=');
@@ -392,11 +400,11 @@ void gameLoop() {
     cout << string(exitPadding, ' ') << exitText << endl;
     _getch(); // Wait for user input
 
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    setConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
 void displayHomeWindow() {
-    system("cls"); // Clear the console
+    clearScreen(); // Use cross-platform clear screen
 
     int consoleWidth = getConsoleWidth(); // Dynamically get console width
     string title = "WELCOME TO TETRIS!";
@@ -408,8 +416,7 @@ void displayHomeWindow() {
     int titlePadding = (consoleWidth - title.size()) / 2;
     int optionPadding = (consoleWidth - option1.size()) / 2;
 
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+    setConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
     cout << "\n\n\n";
     cout << string(titlePadding, ' ') << title << endl; // Center-align title
@@ -424,11 +431,45 @@ void displayHomeWindow() {
     cout << "\n\n";
     cout << string(optionPadding, ' ') << "Select your option: ";
 
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    setConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
+void displayPauseMenu() {
+    clearScreen(); // Use cross-platform clear screen
+    int consoleWidth = 70; // Adjust as needed
+    int consoleHeight = 20; // Adjust as needed
+    string separator(consoleWidth, '=');
+    string pauseText = "GAME PAUSED";
+    string option1 = "(R) Restart";
+    string option2 = "(C) Resume";
+    string option3 = "(E) Exit";
+
+    int pausePadding = (consoleWidth - pauseText.size()) / 2;
+    int option1Padding = (consoleWidth - option1.size()) / 2;
+    int option2Padding = (consoleWidth - option2.size()) / 2;
+    int option3Padding = (consoleWidth - option3.size()) / 2;
+
+    setConsoleColor(FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Set color (Windows only)
+
+    cout << "\n";
+    cout << separator << endl; // Top border
+    for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
+        cout << endl; // Add vertical padding
+    }
+
+    cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
+    cout << endl; // Add spacing between the title and options
+    cout << string(option1Padding, ' ') << option1 << endl;
+    cout << string(option2Padding, ' ') << option2 << endl;
+    cout << string(option3Padding, ' ') << option3 << endl;
+
+    cout << separator << endl; // Bottom border
+
+    setConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default (Windows only)
 }
 
 void showScoreboard() {
-    system("cls"); // Clear the console
+    clearScreen(); // Clear the console
     ifstream file("highscore.txt");
     vector<pair<string, int>> scores;
 
@@ -442,7 +483,7 @@ void showScoreboard() {
     }
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+    setConsoleColor(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
     cout << "\n\n";
     int consoleWidth = 50; // Adjust as needed
@@ -472,7 +513,7 @@ void showScoreboard() {
     cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to return...";
     _getch(); // Wait for user input
 
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    setConsoleColor(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
 void startGame(bool advancedMode) {
