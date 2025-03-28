@@ -29,7 +29,7 @@ vector<vector<vector<int>>> tetrominos = {
     {{1, 1}, {1, 1}}, // O
     {{1, 1, 1}, {1, 0, 0}}, // L
     {{1, 1, 1}, {0, 0, 1}}, // J
-    {{1, 1, 1, 1}, {1, 0, 0, 1}} // New larger tetromino
+    // {{1, 1, 1, 1}, {1, 0, 0, 1}} // New larger tetromino
 };
 
 vector<int> tetrominoColors = {
