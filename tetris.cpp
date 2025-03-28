@@ -230,8 +230,21 @@ void displayPauseMenu() {
     // for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
         cout << endl << endl; // Add vertical padding
     // }
-    cout<<tetrisArt<<endl ;
-    
+    for (int i = 0; i < tetrisArt.length(); i++) {
+        if (tetrisArt[i] == '\n') {
+            cout << endl; // Print newline character as normal
+        } else {
+            // Cycle through colors for each character
+            int color = (i % 7) + 1; // Colors range from 1 to 7
+            SetConsoleTextAttribute(hConsole, color);
+
+            cout << tetrisArt[i]; // Print the character in its assigned color
+        }
+    }
+    cout<<endl;
+    SetConsoleTextAttribute(hConsole, 2) ; // Set color to green for the pause text
+
+
     cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
     cout << endl; // Add spacing between the title and options
     cout << string(option1Padding, ' ') << option1 << endl;
