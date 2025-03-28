@@ -242,8 +242,12 @@ void displayPauseMenu() {
         }
     }
     cout<<endl;
+    cout << "\n";
+
     SetConsoleTextAttribute(hConsole, 2) ; // Set color to green for the pause text
 
+    cout << separator << endl; // Bottom border
+    cout << endl;
 
     cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
     cout << endl; // Add spacing between the title and options
@@ -251,6 +255,7 @@ void displayPauseMenu() {
     cout << string(option2Padding, ' ') << option2 << endl;
     cout << string(option3Padding, ' ') << option3 << endl;
 
+    cout << endl;
     cout << separator << endl; // Bottom border
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
