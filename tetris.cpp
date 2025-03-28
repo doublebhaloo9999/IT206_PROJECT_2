@@ -208,6 +208,14 @@ void displayPauseMenu() {
     string option1 = "(R) Restart";
     string option2 = "(C) Resume";
     string option3 = "(E/Esc) Exit";
+    string tetrisArt = R"(
+        TTTTTT  EEEEEE  TTTTTT  RRRRRR   IIIIII  SSSSSS
+          TT    EE        TT    RR   RR    II    SS
+          TT    EEEEE     TT    RRRRRR     II    SSSSSS
+          TT    EE        TT    RR RR      II        SS
+          TT    EEEEEE    TT    RR RRR   IIIIII  SSSSSS
+          )";
+
 
     int pausePadding = (consoleWidth - pauseText.size()) / 2;
     int option1Padding = (consoleWidth - option1.size()) / 2;
@@ -219,10 +227,11 @@ void displayPauseMenu() {
 
     cout << "\n";
     cout << separator << endl; // Top border
-    for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
-        cout << endl; // Add vertical padding
-    }
-
+    // for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
+        cout << endl << endl; // Add vertical padding
+    // }
+    cout<<tetrisArt<<endl ;
+    
     cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
     cout << endl; // Add spacing between the title and options
     cout << string(option1Padding, ' ') << option1 << endl;
@@ -386,100 +395,6 @@ void gameLoop() {
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
-
-/*
-void displayHomeWindow() {
-    system("cls"); // Clear the console
-
-    int consoleWidth = 70; // Adjust as needed
-    string separator(consoleWidth, '=');
-    string title = "Welcome to Tetris!";
-    string option1 = "(Q) Quickie Mode";
-    string option2 = "(A) Advanced Mode";
-    string option3 = "(S) Show Scoreboard";
-    string option4 = "(E/Esc) Exit";
-
-    int padding = (consoleWidth - title.size()) / 2;
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
-
-    cout << "\n";
-    cout << separator << endl; // Top border
-    cout << string(padding, ' ') << title << endl;
-    cout << separator << endl; // Below title border
-    cout << "\n";
-
-    padding = (consoleWidth - option1.size()) / 2;
-    cout << string(padding, ' ') << option1 << endl;
-
-    padding = (consoleWidth - option2.size()) / 2;
-    cout << string(padding, ' ') << option2 << endl;
-
-    padding = (consoleWidth - option3.size()) / 2;
-    cout << string(padding, ' ') << option3 << endl;
-
-    padding = (consoleWidth - option4.size()) / 2;
-    cout << string(padding, ' ') << option4 << endl;
-
-    cout << "\n";
-    cout << separator << endl; // Bottom border
-    cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-}
-*/
-
-// void displayHomeWindow() {
-//     system("cls"); // Clear the console
-
-//     int consoleWidth = 70; // Adjust as needed
-//     string separator(consoleWidth, '=');
-//     string option1 = "(Q) Quickie Mode";
-//     string option2 = "(A) Advanced Mode";
-//     string option3 = "(S) Show Scoreboard";
-//     string option4 = "(E/Esc) Exit";
-
-//     // ASCII Art for "Tetris"
-//     string tetrisArt = R"(
-//   TTTTT  EEEEE  TTTTT  RRRRR   III  SSSSS
-//     T    E        T    R    R   I   S
-//     T    EEEE     T    RRRRR    I   SSSSS
-//     T    E        T    R  R     I      S
-//     T    EEEEE    T    R   RR  III  SSSSS
-//     )";
-
-//     // Displaying the ASCII art in the center of the screen
-//     int padding = (consoleWidth - tetrisArt.find('\n')) / 2;
-
-//     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-//     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
-
-//     cout << "\n";
-//     cout << separator << endl; // Top border
-//     cout << string(padding, ' ') << tetrisArt << endl;
-//     cout << separator << endl; // Below title border
-//     cout << "\n";
-
-//     // Displaying menu options
-//     padding = (consoleWidth - option1.size()) / 2;
-//     cout << string(padding, ' ') << option1 << endl;
-
-//     padding = (consoleWidth - option2.size()) / 2;
-//     cout << string(padding, ' ') << option2 << endl;
-
-//     padding = (consoleWidth - option3.size()) / 2;
-//     cout << string(padding, ' ') << option3 << endl;
-
-//     padding = (consoleWidth - option4.size()) / 2;
-//     cout << string(padding, ' ') << option4 << endl;
-
-//     cout << "\n";
-//     cout << separator << endl; // Bottom border
-//     cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
-
-//     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-// }
 
 void displayHomeWindow() {
     system("cls"); // Clear the console
