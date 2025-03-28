@@ -1,3 +1,4 @@
+@ -1,563 +0,0 @@
 #include <iostream>
 #include <vector>
 #include <ctime>
@@ -408,8 +409,8 @@ void gameLoop() {
                                         inPauseMenu = false;
                                         break;
                                     case 'e': // Exit
-                                        system("cls"); // Clear the terminal
-                                        exit(0); // Close the terminal
+                                        system("cls"); // Clear the screen before exiting
+                                        exit(0); // Exit the game
                                         break;
                                     default:
                                         cout << "\nInvalid input. Please try again.\n";
