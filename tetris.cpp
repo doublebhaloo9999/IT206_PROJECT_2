@@ -493,11 +493,11 @@ void displayHomeWindow() {
 
     // ASCII Art for "Tetris"
     string tetrisArt = R"(
-  TTTTT  EEEEE  TTTTT  RRRRR   III  SSSSS
-    T    E        T    R    R   I   S
-    T    EEEE     T    RRRRR    I   SSSSS
-    T    E        T    R  R     I      S
-    T    EEEEE    T    R   RR  III  SSSSS
+  TTTTTT  EEEEEE  TTTTTT  RRRRRR   IIIIII  SSSSSS
+    TT    EE        TT    RR   RR    II    SS
+    TT    EEEEE     TT    RRRRRR     II    SSSSSS
+    TT    EE        TT    RR RR      II        SS
+    TT    EEEEEE    TT    RR RRR   IIIIII  SSSSSS
     )";
 
     // Calculate the padding for center alignment of ASCII art
