@@ -19,6 +19,10 @@ int level = 1;
 int linesCleared = 0;
 string username;
 int highScore = 0;
+int frameColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+int fallenBlockColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+int menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+int scoreTextColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominos = {
@@ -29,7 +33,6 @@ vector<vector<vector<int>>> tetrominos = {
     {{1, 1}, {1, 1}}, // O
     {{1, 1, 1}, {1, 0, 0}}, // L
     {{1, 1, 1}, {0, 0, 1}}, // J
-    {{1, 1, 1, 1}, {1, 0, 0, 1}} // New larger tetromino
 };
 
 vector<int> tetrominoColors = {
@@ -136,16 +139,16 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
     // Draw top border
     for (int i = 0; i < width + 2; ++i) {
         buffer[i].Char.AsciiChar = '#';
-        buffer[i].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+        buffer[i].Attributes = frameColor;
     }
 
     for (int i = 0; i < height; ++i) {
         buffer[(i + 1) * bufferSize.X].Char.AsciiChar = '#'; // Left border
-        buffer[(i + 1) * bufferSize.X].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+        buffer[(i + 1) * bufferSize.X].Attributes = frameColor;
         for (int j = 0; j < width; ++j) {
             if (grid[i][j]) {
                 buffer[(i + 1) * bufferSize.X + j + 1].Char.AsciiChar = '1';
-                buffer[(i + 1) * bufferSize.X + j + 1].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+                buffer[(i + 1) * bufferSize.X + j + 1].Attributes = fallenBlockColor;
             } else {
                 bool isTetromino = false;
                 for (int k = 0; k < currentTetromino.shape.size(); ++k) {
@@ -162,20 +165,20 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
             }
         }
         buffer[(i + 1) * bufferSize.X + width + 1].Char.AsciiChar = '#'; // Right border
-        buffer[(i + 1) * bufferSize.X + width + 1].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+        buffer[(i + 1) * bufferSize.X + width + 1].Attributes = frameColor;
     }
 
     // Draw bottom border
     for (int i = 0; i < width + 2; ++i) {
         buffer[(height + 1) * bufferSize.X + i].Char.AsciiChar = '#';
-        buffer[(height + 1) * bufferSize.X + i].Attributes = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+        buffer[(height + 1) * bufferSize.X + i].Attributes = frameColor;
     }
 
     // Display score only
     string scoreStr = "Score: " + to_string(score);
     for (int i = 0; i < scoreStr.size(); ++i) {
         buffer[(height + 2) * bufferSize.X + i].Char.AsciiChar = scoreStr[i];
-        buffer[(height + 2) * bufferSize.X + i].Attributes = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Teal color
+        buffer[(height + 2) * bufferSize.X + i].Attributes = scoreTextColor; // Teal color
     }
 
     // Write buffer to console
@@ -211,7 +214,7 @@ void displayPauseMenu() {
     string option4 = "(E/Esc) Exit";
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color
+    SetConsoleTextAttribute(hConsole, menuTextColor); // Use customizable menu text color
 
     cout << "\n";
     cout << separator << endl; // Top border
@@ -221,17 +224,11 @@ void displayPauseMenu() {
     cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
     cout << endl; // Add spacing between the title and options
 
-    int optionPadding = (consoleWidth - option1.size()) / 2;
-    cout << string(optionPadding, ' ') << option1 << endl;
-
-    optionPadding = (consoleWidth - option2.size()) / 2;
-    cout << string(optionPadding, ' ') << option2 << endl;
-
-    optionPadding = (consoleWidth - option3.size()) / 2;
-    cout << string(optionPadding, ' ') << option3 << endl;
-
-    optionPadding = (consoleWidth - option4.size()) / 2;
-    cout << string(optionPadding, ' ') << option4 << endl;
+    int leftMargin = 10; // Fixed left margin for options
+    cout << string(leftMargin, ' ') << option1 << endl;
+    cout << string(leftMargin, ' ') << option2 << endl;
+    cout << string(leftMargin, ' ') << option3 << endl;
+    cout << string(leftMargin, ' ') << option4 << endl;
 
     cout << "\n";
     cout << separator << endl; // Bottom border
@@ -414,7 +411,7 @@ void displayHomeWindow() {
 
     // Calculate the padding for center alignment of ASCII art
     int paddingForArt = (consoleWidth - 70) / 2;  // Width of the ASCII art
-    int paddingForMenu;
+    int leftMargin = 10; // Fixed left margin for options
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     
@@ -445,21 +442,12 @@ void displayHomeWindow() {
     cout << separator << endl; // Below title border
     cout << "\n";
 
-    // Displaying menu options centered below the ASCII art
-    paddingForMenu = (consoleWidth - option1.size()) / 2;
-    cout << string(paddingForMenu, ' ') << option1 << endl;
-
-    paddingForMenu = (consoleWidth - option2.size()) / 2;
-    cout << string(paddingForMenu, ' ') << option2 << endl;
-
-    paddingForMenu = (consoleWidth - option3.size()) / 2;
-    cout << string(paddingForMenu, ' ') << option3 << endl;
-
-    paddingForMenu = (consoleWidth - option4.size()) / 2;
-    cout << string(paddingForMenu, ' ') << option4 << endl;
-
-    paddingForMenu = (consoleWidth - option5.size()) / 2;
-    cout << string(paddingForMenu, ' ') << option5 << endl;
+    // Displaying menu options with left alignment
+    cout << string(leftMargin, ' ') << option1 << endl;
+    cout << string(leftMargin, ' ') << option2 << endl;
+    cout << string(leftMargin, ' ') << option3 << endl;
+    cout << string(leftMargin, ' ') << option4 << endl;
+    cout << string(leftMargin, ' ') << option5 << endl;
 
     cout << "\n";
     cout << separator << endl; // Bottom border
@@ -517,6 +505,27 @@ void showScoreboard() {
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
+void displayColorOptions() {
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
+    // Array of color names corresponding to color codes
+    string colorNames[] = {
+        "Black", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White",
+        "Gray", "Bright Blue", "Bright Green", "Bright Cyan", "Bright Red", "Bright Magenta", "Bright Yellow", "Bright White"
+    };
+
+    cout << "Available Colors:\n";
+    cout << "=================\n";
+
+    for (int i = 1; i <= 15; ++i) {
+        SetConsoleTextAttribute(hConsole, i); // Set the console text color
+        cout << i << ". " << colorNames[i] << "\n"; // Display the color code and its name
+    }
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    cout << "=================\n";
+}
+
 void customizeGame() {
     system("cls"); // Clear the console
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -528,9 +537,11 @@ void customizeGame() {
         cout << "Customize Your Game\n";
         cout << "===================\n";
         cout << "1. Change Tetromino Colors\n";
-        cout << "2. Adjust Game Speed\n";
-        cout << "3. Reset High Scores\n";
-        cout << "4. Back to Menu\n";
+        cout << "2. Change Frame Color\n";
+        cout << "3. Change Fallen Blocks Color\n";
+        cout << "4. Change Home and Pause Window Text Color\n";
+        cout << "5. Change Current Score Text Color\n";
+        cout << "6. Back to Menu\n";
         cout << "===================\n";
         cout << "Enter your choice: ";
 
@@ -558,7 +569,8 @@ void customizeGame() {
                 cin >> colorChoice;
 
                 if (colorChoice >= 1 && colorChoice <= 7) {
-                    cout << "Enter new color code (1-15): ";
+                    cout << "Enter new color code (1-15):\n";
+                    displayColorOptions(); // Show color options with examples
                     int newColor;
                     cin >> newColor;
 
@@ -579,20 +591,20 @@ void customizeGame() {
                 break;
             }
             case 2: {
-                // Adjust Game Speed
+                // Change Frame Color
                 system("cls");
-                cout << "Adjust Game Speed\n";
-                cout << "=================\n";
-                cout << "Current Speed: " << (500 - (level - 1) * 50) << " ms per fall\n";
-                cout << "Enter new fall interval (in milliseconds, e.g., 300 for faster, 700 for slower): ";
-                int newSpeed;
-                cin >> newSpeed;
+                cout << "Change Frame Color\n";
+                cout << "==================\n";
+                cout << "Enter new color code for the frame (1-15):\n";
+                displayColorOptions(); // Show color options with examples
+                int newColor;
+                cin >> newColor;
 
-                if (newSpeed >= 100 && newSpeed <= 1000) {
-                    level = 1; // Reset level to apply new speed
-                    cout << "Game speed updated successfully!\n";
+                if (newColor >= 1 && newColor <= 15) {
+                    frameColor = newColor; // Update the global frame color variable
+                    cout << "Frame color updated successfully!\n";
                 } else {
-                    cout << "Invalid speed. Please enter a value between 100 and 1000 ms.\n";
+                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
                 }
 
                 cout << "Press any key to return...";
@@ -600,27 +612,69 @@ void customizeGame() {
                 break;
             }
             case 3: {
-                // Reset High Scores
+                // Change Fallen Blocks Color
                 system("cls");
-                cout << "Reset High Scores\n";
-                cout << "=================\n";
-                cout << "Are you sure you want to reset all high scores? (y/n): ";
-                char confirm;
-                cin >> confirm;
+                cout << "Change Fallen Blocks Color\n";
+                cout << "==========================\n";
+                cout << "Enter new color code for fallen blocks (1-15):\n";
+                displayColorOptions(); // Show color options with examples
+                int newColor;
+                cin >> newColor;
 
-                if (tolower(confirm) == 'y') {
-                    highScore = 0;
-                    saveHighScore();
-                    cout << "High scores reset successfully!\n";
+                if (newColor >= 1 && newColor <= 15) {
+                    fallenBlockColor = newColor; // Update the global fallen block color variable
+                    cout << "Fallen blocks color updated successfully!\n";
                 } else {
-                    cout << "High scores were not reset.\n";
+                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
                 }
 
                 cout << "Press any key to return...";
                 _getch();
                 break;
             }
-            case 4:
+            case 4: {
+                // Change Home and Pause Window Text Color
+                system("cls");
+                cout << "Change Home and Pause Window Text Color\n";
+                cout << "=======================================\n";
+                cout << "Enter new color code for menu text (1-15):\n";
+                displayColorOptions(); // Show color options with examples
+                int newColor;
+                cin >> newColor;
+
+                if (newColor >= 1 && newColor <= 15) {
+                    menuTextColor = newColor; // Update the global menu text color variable
+                    cout << "Menu text color updated successfully!\n";
+                } else {
+                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                cout << "Press any key to return...";
+                _getch();
+                break;
+            }
+            case 5: {
+                // Change Current Score Text Color
+                system("cls");
+                cout << "Change Current Score Text Color\n";
+                cout << "===============================\n";
+                cout << "Enter new color code for the score text (1-15):\n";
+                displayColorOptions(); // Show color options with examples
+                int newColor;
+                cin >> newColor;
+
+                if (newColor >= 1 && newColor <= 15) {
+                    scoreTextColor = newColor; // Update the global score text color variable
+                    cout << "Score text color updated successfully!\n";
+                } else {
+                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                cout << "Press any key to return...";
+                _getch();
+                break;
+            }
+            case 6:
                 return; // Back to main menu
             default:
                 cout << "Invalid choice. Please try again.\n";
