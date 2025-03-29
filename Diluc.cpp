@@ -30,89 +30,31 @@ vector<vector<vector<int>>> tetrominos = {
     {{1, 1, 1, 1}}, // I
     {{1, 1, 1}, {0, 1, 0}}, // T
     {{1, 1, 0}, {0, 1, 1}}, // Z
-    {{1, 1, 1, 1}}, // I
-    {{1, 1, 1}, {0, 1, 0}}, // T
-    {{1, 1, 0}, {0, 1, 1}}, // Z
     {{0, 1, 1}, {1, 1, 0}}, // S
     {{1, 1}, {1, 1}}, // O
     {{1, 1, 1}, {1, 0, 0}}, // L
     {{1, 1, 1}, {0, 0, 1}}, // J
 };
 
+vector<int> tetrominoColors = {
+    FOREGROUND_BLUE | FOREGROUND_INTENSITY, // I
+    FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY, // T
+    FOREGROUND_RED | FOREGROUND_INTENSITY, // Z
+    FOREGROUND_GREEN | FOREGROUND_INTENSITY, // S
+    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, // O
+    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY, // L
+    FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY // J
+};
+
 struct Tetromino {
     vector<vector<int>> shape;
     int x, y;
+    int color;
 };
 
 Tetromino currentTetromino;
 
-<<<<<<< Updated upstream
-// Cross-platform _kbhit() and _getch() alternatives
-bool kbhit() {
-    termios oldt, newt;
-    int ch;
-    int oldf;
-
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    oldf = fcntl(STDIN_FILENO, F_GETFL, 0);
-    fcntl(STDIN_FILENO, F_SETFL, oldf | O_NONBLOCK);
-
-    ch = getchar();
-
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    fcntl(STDIN_FILENO, F_SETFL, oldf);
-
-    if (ch != EOF) {
-        ungetc(ch, stdin);
-        return true;
-    }
-
-    return false;
-}
-
-char getch() {
-    termios oldt, newt;
-    char ch;
-    tcgetattr(STDIN_FILENO, &oldt);
-    newt = oldt;
-    newt.c_lflag &= ~(ICANON | ECHO);
-    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
-    ch = getchar();
-    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
-    return ch;
-}
-
-// Get terminal size dynamically
-pair<int, int> getTerminalSize() {
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    return {w.ws_col, w.ws_row};
-}
-
-// Clear screen
-void clearScreen() {
-    cout << "\033[2J\033[1;1H"; // ANSI escape code to clear screen and move cursor to top-left
-}
-
-// Set text color
-void setTextColor(const string& color) {
-    if (color == "red") {
-        cout << "\033[31m";
-    } else if (color == "green") {
-        cout << "\033[32m";
-    } else if (color == "blue") {
-        cout << "\033[34m";
-    } else if (color == "reset") {
-        cout << "\033[0m";
-    }
-}
-
-=======
 // Utility functions
->>>>>>> Stashed changes
 void resetGameState() {
     grid = vector<vector<int>>(height, vector<int>(width, 0));
     score = 0;
@@ -125,6 +67,7 @@ void initialize() {
     currentTetromino.shape = tetrominos[index];
     currentTetromino.x = width / 2 - currentTetromino.shape[0].size() / 2;
     currentTetromino.y = 0;
+    currentTetromino.color = tetrominoColors[index];
 }
 
 bool checkCollision(int newX, int newY, vector<vector<int>> newShape) {
@@ -186,14 +129,6 @@ void rotateTetromino() {
     }
 }
 
-<<<<<<< Updated upstream
-void draw() {
-    clearScreen(); // Clear the terminal before drawing
-
-    // Draw top border
-    for (int i = 0; i < width + 2; ++i) {
-        cout << "#";
-=======
 // Drawing and rendering functions
 void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
     // Clear buffer
@@ -208,65 +143,41 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
     for (int i = 0; i < width + 2; ++i) {
         buffer[i].Char.AsciiChar = '#';
         buffer[i].Attributes = frameColor;
->>>>>>> Stashed changes
     }
-    cout << endl;
 
     for (int i = 0; i < height; ++i) {
-<<<<<<< Updated upstream
-        cout << "#"; // Left border
-        for (int j = 0; j < width; ++j) {
-            if (grid[i][j]) {
-                cout << "1";
-=======
         buffer[(i + 1) * bufferSize.X].Char.AsciiChar = '#'; // Left border
         buffer[(i + 1) * bufferSize.X].Attributes = frameColor;
         for (int j = 0; j < width; ++j) {
             if (grid[i][j]) {
                 buffer[(i + 1) * bufferSize.X + j + 1].Char.AsciiChar = '1';
                 buffer[(i + 1) * bufferSize.X + j + 1].Attributes = fallenBlockColor;
->>>>>>> Stashed changes
             } else {
                 bool isTetromino = false;
                 for (int k = 0; k < currentTetromino.shape.size(); ++k) {
                     for (int l = 0; l < currentTetromino.shape[k].size(); ++l) {
                         if (currentTetromino.shape[k][l] && currentTetromino.y + k == i && currentTetromino.x + l == j) {
-                            cout << "1";
+                            buffer[(i + 1) * bufferSize.X + j + 1].Char.AsciiChar = '1';
+                            buffer[(i + 1) * bufferSize.X + j + 1].Attributes = currentTetromino.color;
                             isTetromino = true;
                             break;
                         }
                     }
                     if (isTetromino) break;
                 }
-                if (!isTetromino) {
-                    cout << " ";
-                }
             }
         }
-<<<<<<< Updated upstream
-        cout << "#"; // Right border
-        cout << endl;
-=======
         buffer[(i + 1) * bufferSize.X + width + 1].Char.AsciiChar = '#'; // Right border
         buffer[(i + 1) * bufferSize.X + width + 1].Attributes = frameColor;
->>>>>>> Stashed changes
     }
 
     // Draw bottom border
     for (int i = 0; i < width + 2; ++i) {
-<<<<<<< Updated upstream
-        cout << "#";
-=======
         buffer[(height + 1) * bufferSize.X + i].Char.AsciiChar = '#';
         buffer[(height + 1) * bufferSize.X + i].Attributes = frameColor;
->>>>>>> Stashed changes
     }
-    cout << endl;
 
     // Display score only
-<<<<<<< Updated upstream
-    cout << "Score: " << score << endl;
-=======
     string scoreStr = "Score: " + to_string(score);
     for (int i = 0; i < scoreStr.size(); ++i) {
         buffer[(height + 2) * bufferSize.X + i].Char.AsciiChar = scoreStr[i];
@@ -277,7 +188,6 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
     COORD bufferCoord = { 0, 0 };
     SMALL_RECT writeRegion = { 0, 0, static_cast<SHORT>(bufferSize.X - 1), static_cast<SHORT>(bufferSize.Y - 1) };
     WriteConsoleOutputA(hConsole, buffer, bufferSize, bufferCoord, &writeRegion);
->>>>>>> Stashed changes
 }
 
 // File handling functions
@@ -297,10 +207,6 @@ void loadHighScore() {
     }
 }
 
-<<<<<<< Updated upstream
-void gameLoop() {
-    clearScreen(); // Clear the terminal before starting the game
-=======
 // Menu display functions
 void displayPauseMenu() {
     system("cls"); // Clear the screen
@@ -666,7 +572,6 @@ void gameLoop() {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE); // Declare only once
     COORD bufferSize = { width + 2, height + 3 };
     CHAR_INFO buffer[bufferSize.X * bufferSize.Y];
->>>>>>> Stashed changes
 
     auto lastFrameTime = high_resolution_clock::now();
     auto lastFallTime = high_resolution_clock::now();
@@ -682,55 +587,30 @@ void gameLoop() {
         if (frameDuration.count() >= 33) { // 30 FPS -> 1000ms / 30 = ~33ms per frame
             lastFrameTime = currentTime;
 
-            if (kbhit()) {
-                char ch = getch();
-                switch (ch) {
-                    case 'a': // Move left
-                        if (!checkCollision(currentTetromino.x - 1, currentTetromino.y, currentTetromino.shape)) {
-                            currentTetromino.x--;
-                        }
-                        break;
-                    case 'd': // Move right
-                        if (!checkCollision(currentTetromino.x + 1, currentTetromino.y, currentTetromino.shape)) {
-                            currentTetromino.x++;
-                        }
-                        break;
-                    case 's': // Move down
-                        if (!checkCollision(currentTetromino.x, currentTetromino.y + 1, currentTetromino.shape)) {
-                            currentTetromino.y++;
-                        }
-                        break;
-                    case 'w': // Rotate
-                        rotateTetromino();
-                        break;
-                    case ' ': // Drop
-                        while (!checkCollision(currentTetromino.x, currentTetromino.y + 1, currentTetromino.shape)) {
-                            currentTetromino.y++;
-                        }
-                        break;
-                    case 27: // ESC key
-                        clearScreen();
-                        cout << "Game Paused. Press any key to resume.\n";
-                        getch();
-                        break;
-                }
-            }
-
-            if (fallDuration.count() >= fallInterval) {
-                lastFallTime = currentTime;
-                if (!checkCollision(currentTetromino.x, currentTetromino.y + 1, currentTetromino.shape)) {
-                    currentTetromino.y++;
+            if (_kbhit()) {
+                int ch = _getch();
+                if (ch == 0 || ch == 224) {
+                    switch (_getch()) {
+                        case 75: // Left arrow key
+                            if (!checkCollision(currentTetromino.x - 1, currentTetromino.y, currentTetromino.shape)) {
+                                currentTetromino.x--;
+                            }
+                            break;
+                        case 77: // Right arrow key
+                            if (!checkCollision(currentTetromino.x + 1, currentTetromino.y, currentTetromino.shape)) {
+                                currentTetromino.x++;
+                            }
+                            break;
+                        case 80: // Down arrow key
+                            if (!checkCollision(currentTetromino.x, currentTetromino.y + 1, currentTetromino.shape)) {
+                                currentTetromino.y++;
+                            }
+                            break;
+                        case 72: // Up arrow key
+                            rotateTetromino();
+                            break;
+                    }
                 } else {
-<<<<<<< Updated upstream
-                    placeTetromino();
-                    clearLines();
-                    int index = rand() % tetrominos.size();
-                    currentTetromino.shape = tetrominos[index];
-                    currentTetromino.x = width / 2 - currentTetromino.shape[0].size() / 2;
-                    currentTetromino.y = 0;
-                    if (checkCollision(currentTetromino.x, currentTetromino.y, currentTetromino.shape)) {
-                        isGameOver = true;
-=======
                     switch (ch) {
                         case 'a':
                             if (!checkCollision(currentTetromino.x - 1, currentTetromino.y, currentTetromino.shape)) {
@@ -786,39 +666,10 @@ void gameLoop() {
                                 }
                             }
                             break;
->>>>>>> Stashed changes
                     }
                 }
             }
 
-            // Draw the game
-            draw();
-        }
-    }
-
-    // Game Over screen
-    clearScreen();
-    setTextColor("red");
-    cout << "GAME OVER\n";
-    setTextColor("reset");
-    cout << "Your Score: " << score << "\n";
-    if (score > highScore) {
-        highScore = score;
-        saveHighScore();
-        cout << "New High Score: " << highScore << "!\n";
-    } else {
-        cout << "High Score: " << highScore << "\n";
-    }
-    cout << "Press any key to exit...\n";
-    getch();
-}
-
-void displayHomeWindow() {
-    clearScreen(); // Clear the console
-
-    auto [consoleWidth, consoleHeight] = getTerminalSize(); // Dynamically get console width
-    string title = "WELCOME TO TETRIS!";
-    string option1 = "Q - Quickie Mode";
             if (fallDuration.count() >= fallInterval) {
                 lastFallTime = currentTime;
                 if (!checkCollision(currentTetromino.x, currentTetromino.y + 1, currentTetromino.shape)) {
@@ -843,20 +694,11 @@ void displayHomeWindow() {
 
     // Smooth transition to Game Over screen
     system("cls");
-<<<<<<< Updated upstream
-
-    int consoleWidth = getConsoleWidth(); // Dynamically get console width
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
-
-    string gameOverText = "G A M E   O V E R";
-    string separator(consoleWidth, '=');
-=======
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
 
     int consoleWidth = 70; // Adjust to match the screen width
     string border(consoleWidth, '=');
     string gameOverText = "GAME OVER";
->>>>>>> Stashed changes
     string scoreText = "Your Score: " + to_string(score);
     string highScoreText = (score > highScore) ? "New High Score: " + to_string(score) + "!" : "High Score: " + to_string(highScore);
     string exitText = "Press any key to continue...";
@@ -875,89 +717,6 @@ void displayHomeWindow() {
     _getch(); // Wait for user input
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-<<<<<<< Updated upstream
-}
-
-void displayHomeWindow() {
-    system("cls"); // Clear the console
-
-    int consoleWidth = getConsoleWidth(); // Dynamically get console width
-    string title = "WELCOME TO TETRIS!";
-    string option1 = "Q - Quickie Mode";
-    string option2 = "A - Advanced Mode";
-    string option3 = "S - Show Scoreboard";
-    string separator(consoleWidth, '=');
-
-    int titlePadding = (consoleWidth - title.size()) / 2;
-    int optionPadding = (consoleWidth - option1.size()) / 2;
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
-
-    cout << "\n\n\n";
-    cout << string(titlePadding, ' ') << title << endl; // Center-align title
-    cout << separator << endl;
-    cout << "\n\n";
-
-    // Center-align options
-    cout << string(optionPadding, ' ') << option1 << endl;
-    cout << string(optionPadding, ' ') << option2 << endl;
-    cout << string(optionPadding, ' ') << option3 << endl;
-
-    cout << "\n\n";
-    cout << string(optionPadding, ' ') << "Select your option: ";
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-}
-
-void showScoreboard() {
-    system("cls"); // Clear the console
-    ifstream file("highscore.txt");
-    vector<pair<string, int>> scores;
-
-    if (file.is_open()) {
-        string name;
-        int score;
-        while (file >> name >> score) {
-            scores.push_back({name, score});
-        }
-        file.close();
-    }
-
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
-
-    cout << "\n\n";
-    int consoleWidth = 50; // Adjust as needed
-    string title = "Scoreboard";
-    string separator(consoleWidth, '=');
-    int padding = (consoleWidth - title.size()) / 2;
-
-    cout << string(padding, ' ') << separator << endl;
-    cout << string(padding, ' ') << title << endl;
-    cout << string(padding, ' ') << separator << endl;
-
-    if (scores.empty()) {
-        cout << "\n";
-        string noGamesMessage = "No games have been played in the Advanced Mode.";
-        padding = (consoleWidth - noGamesMessage.size()) / 2;
-        cout << string(padding, ' ') << noGamesMessage << endl;
-    } else {
-        cout << "\n";
-        for (int i = 0; i < scores.size() && i < 10; ++i) {
-            string entry = to_string(i + 1) + ". " + scores[i].first + " - " + to_string(scores[i].second);
-            padding = (consoleWidth - entry.size()) / 2;
-            cout << string(padding, ' ') << entry << endl;
-        }
-    }
-
-    cout << "\n";
-    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to return...";
-    _getch(); // Wait for user input
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
-=======
->>>>>>> Stashed changes
 }
 
 void startGame(bool advancedMode) {
