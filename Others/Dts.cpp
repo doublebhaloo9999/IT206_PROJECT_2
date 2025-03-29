@@ -7,6 +7,7 @@
 #include <chrono> // For timing
 #include <string>
 #include <fstream>
+#include <algorithm> // For sort()
 
 using namespace std;
 using namespace std::chrono;
@@ -347,6 +348,66 @@ void showScoreboard() {
             string entry = to_string(i + 1) + ". " + scores[i].first + " - " + to_string(scores[i].second);
             padding = (consoleWidth - entry.size()) / 2;
             cout << string(padding, ' ') << entry << endl;
+        }
+    }
+
+    cout << "\n";
+    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to exit...";
+    _getch(); // Wait for user input
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
+void showLeaderboard() {
+    system("cls"); // Clear the console
+    ifstream file("leaderboard.txt");
+    vector<pair<string, int>> leaderboard;
+
+    // Load leaderboard data from file
+    if (file.is_open()) {
+        string name;
+        int score;
+        while (file >> name >> score) {
+            leaderboard.push_back({name, score});
+        }
+        file.close();
+    }
+
+    // Sort leaderboard by score in descending order
+    sort(leaderboard.begin(), leaderboard.end(), [](const pair<string, int>& a, const pair<string, int>& b) {
+        return b.second < a.second;
+    });
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+
+    cout << "\n\n";
+    int consoleWidth = 50; // Adjust as needed
+    string title = "Leaderboard";
+    string separator(consoleWidth, '=');
+    int padding = (consoleWidth - title.size()) / 2;
+
+    cout << string(padding, ' ') << separator << endl;
+    cout << string(padding, ' ') << title << endl;
+    cout << string(padding, ' ') << separator << endl;
+
+    if (leaderboard.empty()) {
+        cout << "\n";
+        string noGamesMessage = "No games have been played yet.";
+        padding = (consoleWidth - noGamesMessage.size()) / 2;
+        cout << string(padding, ' ') << noGamesMessage << endl;
+    } else {
+        cout << "\n";
+        cout << "Rank   Username       Score\n";
+        cout << "===========================\n";
+        for (int i = 0; i < leaderboard.size() && i < 10; ++i) { // Display top 10 scores
+            string rank = to_string(i + 1) + ".";
+            string name = leaderboard[i].first;
+            string score = to_string(leaderboard[i].second);
+
+            cout << rank << string(7 - rank.size(), ' ') // Align rank
+                 << name << string(15 - name.size(), ' ') // Align username
+                 << score << endl; // Display score
         }
     }
 
@@ -723,7 +784,7 @@ void startGame(bool advancedMode) {
     resetGameState(); // Reset the game state
 
     if (advancedMode) {
-        cout << "Enter your username: ";
+        cout << "Enter Username: ";
         cin >> username;
         loadHighScore();
         cout << "Current High Score: " << highScore << endl;
@@ -755,7 +816,7 @@ int main() {
             saveHighScore();
             return 0;
         } else {
-            cout << "\nInvalid input. Please select a valid option.\n";
+            cout << "\nInvalid input.\n";
             Sleep(1000); // Pause for 1 second to show the error
         }
     }

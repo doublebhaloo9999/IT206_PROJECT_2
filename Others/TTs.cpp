@@ -730,7 +730,7 @@ void startGame(bool advancedMode) {
     resetGameState(); // Reset the game state
 
     if (advancedMode) {
-        cout << "Enter your username: ";
+        cout << "Enter Username: ";
         cin >> username;
         loadHighScore();
         cout << "Current High Score: " << highScore << endl;
@@ -762,7 +762,7 @@ int main() {
             saveHighScore();
             return 0;
         } else {
-            cout << "\nInvalid input. Please select a valid option.\n";
+            cout << "\nInvalid input.\n";
             Sleep(1000); // Pause for 1 second to show the error
         }
     }
