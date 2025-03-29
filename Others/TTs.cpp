@@ -7,6 +7,7 @@
 #include <chrono> // For timing
 #include <string>
 #include <fstream>
+#include <algorithm> // For sort()
 
 using namespace std;
 using namespace std::chrono;
@@ -24,6 +25,9 @@ int frameColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUN
 int fallenBlockColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 int menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 int scoreTextColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+
+// Add a global variable to store the high score
+int globalHighScore = 0;
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominos = {
@@ -191,19 +195,19 @@ void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
 }
 
 // File handling functions
-void saveHighScore() {
-    ofstream file("highscore.txt");
-    if (file.is_open()) {
-        file << username << " " << highScore << endl;
-        file.close();
-    }
-}
 
-void loadHighScore() {
-    ifstream file("highscore.txt");
+// Modify loadHighScoreFromLeaderboard() to initialize globalHighScore
+void loadHighScoreFromLeaderboard() {
+    ifstream file("leaderboard.txt");
     if (file.is_open()) {
-        file >> username >> highScore;
+        string name;
+        int score;
+        if (file >> name >> score) { // Read the first entry
+            globalHighScore = score;
+        }
         file.close();
+    } else {
+        globalHighScore = 0; // Default to 0 if leaderboard.txt doesn't exist
     }
 }
 
@@ -248,7 +252,7 @@ void displayHomeWindow() {
     string separator(consoleWidth, '=');
     string option1 = "(Q) Quickie Mode";
     string option2 = "(A) Advanced Mode";
-    string option3 = "(S) Show Scoreboard";
+    string option3 = "(L) Leaderboard";
     string option4 = "(C) Customize";
     string option5 = "(E/Esc) Exit";
 
@@ -303,7 +307,6 @@ void displayHomeWindow() {
 
     cout << "\n";
     cout << separator << endl; // Bottom border
-    cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
 
     // Reset the color to default after displaying everything
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
@@ -348,6 +351,63 @@ void showScoreboard() {
             padding = (consoleWidth - entry.size()) / 2;
             cout << string(padding, ' ') << entry << endl;
         }
+    }
+
+    cout << "\n";
+    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to exit...";
+    _getch(); // Wait for user input
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
+void showLeaderboard() {
+    system("cls"); // Clear the console
+    ifstream file("leaderboard.txt");
+    vector<pair<string, int>> leaderboard;
+
+    // Load leaderboard data from file
+    if (file.is_open()) {
+        string name;
+        int score;
+        while (file >> name >> score) {
+            leaderboard.push_back({name, score});
+        }
+        file.close();
+    }
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+
+    cout << "\n\n";
+    int consoleWidth = 50; // Adjust as needed
+    string title = "Leaderboard";
+    string separator(consoleWidth, '=');
+    int padding = (consoleWidth - title.size()) / 2;
+
+    cout << separator << endl;
+    cout << string(padding, ' ') << title << endl;
+    cout << separator << endl;
+
+    if (leaderboard.empty()) {
+        cout << "\n";
+        string noGamesMessage = "No games have been played yet.";
+        padding = (consoleWidth - noGamesMessage.size()) / 2;
+        cout << string(padding, ' ') << noGamesMessage << endl;
+    } else {
+        // Print the leaderboard with proper alignment
+        cout << "+------+-----------------+-------+" << endl;
+        cout << "| Rank | Username        | Score |" << endl;
+        cout << "+------+-----------------+-------+" << endl;
+        for (int i = 0; i < leaderboard.size() && i < 10; ++i) { // Display top 10 scores
+            string rank = to_string(i + 1);
+            string name = leaderboard[i].first;
+            string score = to_string(leaderboard[i].second);
+
+            cout << "| " << rank << string(4 - rank.size(), ' ') // Align rank
+                 << " | " << name << string(15 - name.size(), ' ') // Align username
+                 << " | " << score << string(5 - score.size(), ' ') << " |" << endl; // Align score
+        }
+        cout << "+------+-----------------+-------+" << endl;
     }
 
     cout << "\n";
@@ -420,12 +480,11 @@ void customizeGame() {
         cout << "===================\n";
         cout << "Enter your choice: ";
 
-        char choice;
-        // cin >> choice;
-        choice = _getch();
+        int choice;
+        cin >> choice;
 
         switch (choice) {
-            case '1': {
+            case 1: {
                 // Change Tetromino Colors
                 system("cls");
                 cout << "Change Tetromino Colors\n";
@@ -441,16 +500,14 @@ void customizeGame() {
                 cout << "========================\n";
                 cout << "Enter your choice: ";
 
-                char colorChoice;
-                // cin >> colorChoice;
-                colorChoice = _getch();
+                int colorChoice;
+                cin >> colorChoice;
 
-                if (colorChoice >= '1' && colorChoice <= '7') {
+                if (colorChoice >= 1 && colorChoice <= 7) {
                     cout << "Enter new color code (1-15):\n";
                     displayColorOptions(); // Show color options with examples
                     int newColor;
                     cin >> newColor;
-                    // newColor = _getch();
 
                     if (newColor >= 1 && newColor <= 15) {
                         tetrominoColors[colorChoice - 1] = newColor;
@@ -468,7 +525,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case '2': {
+            case 2: {
                 // Change Frame Color
                 system("cls");
                 cout << "Change Frame Color\n";
@@ -477,7 +534,6 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
-                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     frameColor = newColor; // Update the global frame color variable
@@ -490,7 +546,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case '3': {
+            case 3: {
                 // Change Fallen Blocks Color
                 system("cls");
                 cout << "Change Fallen Blocks Color\n";
@@ -499,7 +555,6 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
-                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     fallenBlockColor = newColor; // Update the global fallen block color variable
@@ -512,7 +567,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case '4': {
+            case 4: {
                 // Change Home and Pause Window Text Color
                 system("cls");
                 cout << "Change Home and Pause Window Text Color\n";
@@ -521,7 +576,6 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
-                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     menuTextColor = newColor; // Update the global menu text color variable
@@ -534,7 +588,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case '5': {
+            case 5: {
                 // Change Current Score Text Color
                 system("cls");
                 cout << "Change Current Score Text Color\n";
@@ -543,7 +597,6 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
-                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     scoreTextColor = newColor; // Update the global score text color variable
@@ -556,12 +609,12 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case '6': {
+            case 6: {
                 // Reset to Default
                 resetToDefault();
                 break;
             }
-            case '7':
+            case 7:
                 return; // Back to main menu
             default:
                 cout << "Invalid choice. Please try again.\n";
@@ -726,23 +779,80 @@ void gameLoop() {
     system("cls"); // Clear the screen and return to the home window
 }
 
+void updateLeaderboard(int finalScore, bool advancedMode) {
+    ifstream file("leaderboard.txt");
+    vector<pair<string, int>> leaderboard;
+
+    // Load leaderboard data from file
+    if (file.is_open()) {
+        string name;
+        int score;
+        while (file >> name >> score) {
+            leaderboard.push_back({name, score});
+        }
+        file.close();
+    }
+
+    // Skip adding entry if in Quickie Mode, score is 0, and leaderboard isn't full
+    if (!advancedMode && finalScore == 0 && leaderboard.size() < 10) {
+        return;
+    }
+
+    // Check if the score qualifies for the leaderboard
+    string name;
+    if (leaderboard.size() < 10 || finalScore > leaderboard.back().second) {
+        cout << "Congratulations! Your score qualifies for the leaderboard.\n";
+        cout << "Enter your username (or type 'n' to skip): ";
+        cin >> name;
+
+        if (name == "n" || name == "N") {
+            name = "UNKNOWN";
+        }
+
+        leaderboard.push_back({name, finalScore});
+    }
+
+    // Sort leaderboard by score in descending order and keep top 10
+    sort(leaderboard.begin(), leaderboard.end(), [](const pair<string, int>& a, const pair<string, int>& b) {
+        return b.second < a.second;
+    });
+    if (leaderboard.size() > 10) {
+        leaderboard.resize(10);
+    }
+
+    // Save updated leaderboard to file
+    ofstream outFile("leaderboard.txt");
+    if (outFile.is_open()) {
+        for (const auto& entry : leaderboard) {
+            outFile << entry.first << " " << entry.second << endl;
+        }
+        outFile.close();
+    }
+}
+
 void startGame(bool advancedMode) {
     resetGameState(); // Reset the game state
 
     if (advancedMode) {
         cout << "Enter Username: ";
         cin >> username;
-        loadHighScore();
-        cout << "Current High Score: " << highScore << endl;
+        cout << "Current High Score: " << globalHighScore << endl;
     }
 
     initialize();
     gameLoop();
+
+    // Update leaderboard after the game ends
+    updateLeaderboard(score, advancedMode);
+    if (advancedMode && score > globalHighScore) {
+        globalHighScore = score; // Update the global high score
+    }
 }
 
-// Main function
+// Modify main() to initialize globalHighScore at the start
 int main() {
     srand(time(0)); // Initialize random seed
+    loadHighScoreFromLeaderboard(); // Initialize globalHighScore
 
     while (true) {
         displayHomeWindow(); // Display the home window
@@ -754,12 +864,11 @@ int main() {
             startGame(true);
         } else if (tolower(mode) == 'q') {
             startGame(false);
-        } else if (tolower(mode) == 's') {
-            showScoreboard();
+        } else if (tolower(mode) == 'l') { // Changed from 's' to 'l'
+            showLeaderboard();
         } else if (tolower(mode) == 'c') {
             customizeGame();
         } else if (tolower(mode) == 'e' || mode == 27) { // Exit
-            saveHighScore();
             return 0;
         } else {
             cout << "\nInvalid input.\n";
