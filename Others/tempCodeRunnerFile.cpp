@@ -214,9 +214,9 @@ void displayPauseMenu() {
     string separator(consoleWidth, '=');
     string pauseText = "GAME PAUSED";
     string option1 = "(R) Restart";
-    string option2 = "(Enter) Resume";
+    string option2 = "(C) Resume";
     string option3 = "(M) Customize";
-    string option4 = "(ESC/B) Back to Home";
+    string option4 = "(B) Back to Home";
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, menuTextColor); // Use customizable menu text color
@@ -635,8 +635,7 @@ void gameLoop() {
                                 currentTetromino.y++;
                             }
                             break;
-                        case 27: // ESC key to open pause menu
-                        case 13: // Enter key to open pause menu
+                        case 27: // (ESC key=27) displays pause screen
                             bool inPauseMenu = true;
                             while (inPauseMenu) {
                                 displayPauseMenu();
@@ -648,7 +647,6 @@ void gameLoop() {
                                         system("cls"); // Clear the screen after choosing restart
                                         inPauseMenu = false;
                                         break;
-                                    case 13: // Enter to Resume
                                     case 'c': // Resume
                                         system("cls"); // Clear the screen after choosing resume
                                         inPauseMenu = false;
@@ -657,7 +655,6 @@ void gameLoop() {
                                         customizeGame();
                                         break;
                                     case 'b': // Back to Home
-                                    case 27: // ESC key for Back to Home
                                         system("cls"); // Clear the screen
                                         return; // Exit the game loop and return to the home window
                                     default:

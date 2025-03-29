@@ -214,9 +214,9 @@ void displayPauseMenu() {
     string separator(consoleWidth, '=');
     string pauseText = "GAME PAUSED";
     string option1 = "(R) Restart";
-    string option2 = "(C) Resume";
+    string option2 = "(Enter) Resume";
     string option3 = "(M) Customize";
-    string option4 = "(E/Esc) Exit";
+    string option4 = "(ESC/B) Back to Home";
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, menuTextColor); // Use customizable menu text color
@@ -635,7 +635,8 @@ void gameLoop() {
                                 currentTetromino.y++;
                             }
                             break;
-                        case 27 : // (ESC key=27) displays pause screen
+                        case 27: // ESC key to open pause menu
+                        case 13: // Enter key to open pause menu
                             bool inPauseMenu = true;
                             while (inPauseMenu) {
                                 displayPauseMenu();
@@ -647,18 +648,18 @@ void gameLoop() {
                                         system("cls"); // Clear the screen after choosing restart
                                         inPauseMenu = false;
                                         break;
+                                    case 13: // Enter to Resume
                                     case 'c': // Resume
                                         system("cls"); // Clear the screen after choosing resume
                                         inPauseMenu = false;
                                         break;
-                                    case 'e': // Exit
-                                        system("cls"); // Clear the screen before exiting
-                                        exit(0); // Exit the game
+                                    case 'm': // Customize
+                                        customizeGame();
                                         break;
-                                    case 27: //ESC exit
-                                        system("cls");
-                                        exit(0);
-                                        break;
+                                    case 'b': // Back to Home
+                                    case 27: // ESC key for Back to Home
+                                        system("cls"); // Clear the screen
+                                        return; // Exit the game loop and return to the home window
                                     default:
                                         cout << "\nInvalid input. Please try again.\n";
                                         Sleep(1000); // Pause for 1 second to show the error
@@ -701,7 +702,7 @@ void gameLoop() {
     string gameOverText = "GAME OVER";
     string scoreText = "Your Score: " + to_string(score);
     string highScoreText = (score > highScore) ? "New High Score: " + to_string(score) + "!" : "High Score: " + to_string(highScore);
-    string exitText = "Press any key to continue...";
+    string exitText = "Press any key to return to the home window...";
 
     cout << "\n\n";
     cout << border << endl;
@@ -715,8 +716,7 @@ void gameLoop() {
     cout << border << endl; // Add a border line after "Press any key to exit..."
 
     _getch(); // Wait for user input
-
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    system("cls"); // Clear the screen and return to the home window
 }
 
 void startGame(bool advancedMode) {
@@ -727,23 +727,10 @@ void startGame(bool advancedMode) {
         cin >> username;
         loadHighScore();
         cout << "Current High Score: " << highScore << endl;
-        // cout<<"Do you want to customize? (y/n)"<<endl;
-        // char choice;
-        // choice = _getch();
-        // if(tolower(choice) == 'y'){
-            
-        // }
     }
 
     initialize();
     gameLoop();
-
-    char choice;
-    cout << "Do you want to play again? (y/n): ";
-    choice = _getch();
-    if (choice == 'y' || choice == 'Y') {
-        startGame(advancedMode);
-    }
 }
 
 // Main function
