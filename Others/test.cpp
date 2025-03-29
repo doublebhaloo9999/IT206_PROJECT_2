@@ -7,5 +7,6 @@ int main() {
         SetConsoleTextAttribute( hConsole, i  ); 
         cout<<i<<" : " << "COLOR "<<endl; 
     }
+
     return 0;
 }
