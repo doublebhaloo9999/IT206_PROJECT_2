@@ -30,7 +30,8 @@ vector<vector<vector<int>>> tetrominos = {
     {{0, 1, 1}, {1, 1, 0}}, // S
     {{1, 1}, {1, 1}}, // O
     {{1, 1, 1}, {1, 0, 0}}, // L
-    {{1, 1, 1}, {0, 0, 1}} // J
+    {{1, 1, 1}, {0, 0, 1}}, // J
+    {{1, 1, 1, 1}, {1, 0, 0, 1}} // New larger tetromino
 };
 
 vector<int> tetrominoColors = {
@@ -296,7 +297,15 @@ void displayPauseMenu() {
     string pauseText = "GAME PAUSED";
     string option1 = "(R) Restart";
     string option2 = "(C) Resume";
-    string option3 = "(E) Exit";
+    string option3 = "(E/Esc) Exit";
+    string tetrisArt = R"(
+        TTTTTT  EEEEEE  TTTTTT  RRRRRR   IIIIII  SSSSSS
+          TT    EE        TT    RR   RR    II    SS
+          TT    EEEEE     TT    RRRRRR     II    SSSSSS
+          TT    EE        TT    RR RR      II        SS
+          TT    EEEEEE    TT    RR RRR   IIIIII  SSSSSS
+          )";
+
 
     int pausePadding = (consoleWidth - pauseText.size()) / 2;
     int option1Padding = (consoleWidth - option1.size()) / 2;
@@ -308,9 +317,27 @@ void displayPauseMenu() {
 
     cout << "\n";
     cout << separator << endl; // Top border
-    for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
-        cout << endl; // Add vertical padding
+    // for (int i = 0; i < consoleHeight / 2 - 3; ++i) {
+        cout << endl << endl; // Add vertical padding
+    // }
+    for (int i = 0; i < tetrisArt.length(); i++) {
+        if (tetrisArt[i] == '\n') {
+            cout << endl; // Print newline character as normal
+        } else {
+            // Cycle through colors for each character
+            int color = (i % 7) + 1; // Colors range from 1 to 7
+            SetConsoleTextAttribute(hConsole, color);
+
+            cout << tetrisArt[i]; // Print the character in its assigned color
+        }
     }
+    cout<<endl;
+    cout << "\n";
+
+    SetConsoleTextAttribute(hConsole, 2) ; // Set color to green for the pause text
+
+    cout << separator << endl; // Bottom border
+    cout << endl;
 
     cout << string(pausePadding, ' ') << pauseText << endl; // Larger title
     cout << endl; // Add spacing between the title and options
@@ -318,6 +345,7 @@ void displayPauseMenu() {
     cout << string(option2Padding, ' ') << option2 << endl;
     cout << string(option3Padding, ' ') << option3 << endl;
 
+    cout << endl;
     cout << separator << endl; // Bottom border
 
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
@@ -392,7 +420,7 @@ void gameLoop() {
                                 currentTetromino.y++;
                             }
                             break;
-                        case 27: // ESC key
+                        case 27 : // (ESC key=27) displays pause screen
                             bool inPauseMenu = true;
                             while (inPauseMenu) {
                                 displayPauseMenu();
@@ -411,6 +439,10 @@ void gameLoop() {
                                     case 'e': // Exit
                                         system("cls"); // Clear the screen before exiting
                                         exit(0); // Exit the game
+                                        break;
+                                    case 27: //ESC exit
+                                        system("cls");
+                                        exit(0);
                                         break;
                                     default:
                                         cout << "\nInvalid input. Please try again.\n";
@@ -453,8 +485,13 @@ void gameLoop() {
     string border(consoleWidth, '=');
     string gameOverText = "GAME OVER";
     string scoreText = "Your Score: " + to_string(score);
+<<<<<<< Updated upstream:Others/Diluc.cpp
     string highScoreText = (score > highestScore) ? "New Highest Score: " + to_string(score) + "!" : "Highest Score: " + to_string(highestScore);
     string exitText = "Press any key to exit...";
+=======
+    string highScoreText = (score > highScore) ? "New High Score: " + to_string(score) + "!" : "High Score: " + to_string(highScore);
+    string exitText = "Press any key to continue...";
+>>>>>>> Stashed changes:Dts.cpp
 
     cout << "\n\n";
     cout << border << endl;
@@ -477,46 +514,148 @@ void displayHomeWindow() {
 
     int consoleWidth = 70; // Adjust as needed
     string separator(consoleWidth, '=');
-    string title = "Welcome to Tetris!";
     string option1 = "(Q) Quickie Mode";
     string option2 = "(A) Advanced Mode";
+<<<<<<< Updated upstream:Others/Diluc.cpp
     string option3 = "(L) Leaderboard"; // Change option to 'L'
+=======
+    string option3 = "(S) Show Scoreboard";
+    string option4 = "(E/Esc) Exit";
+>>>>>>> Stashed changes:Dts.cpp
 
-    int padding = (consoleWidth - title.size()) / 2;
+    // ASCII Art for "Tetris"
+    string tetrisArt = R"(
+  TTTTTT  EEEEEE  TTTTTT  RRRRRR   IIIIII  SSSSSS
+    TT    EE        TT    RR   RR    II    SS
+    TT    EEEEE     TT    RRRRRR     II    SSSSSS
+    TT    EE        TT    RR RR      II        SS
+    TT    EEEEEE    TT    RR RRR   IIIIII  SSSSSS
+    )";
+
+    // Calculate the padding for center alignment of ASCII art
+    int paddingForArt = (consoleWidth - 70) / 2;  // Width of the ASCII art
+    int paddingForMenu;
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+    
+    // Set the console text color to teal
+    SetConsoleTextAttribute(hConsole,3 ); 
 
+    // Display the ASCII art in colorful parts
     cout << "\n";
     cout << separator << endl; // Top border
-    cout << string(padding, ' ') << title << endl;
+
+    // Loop through each character in the ASCII art and change colors
+    for (int i = 0; i < tetrisArt.length(); i++) {
+        if (tetrisArt[i] == '\n') {
+            cout << endl; // Print newline character as normal
+        } else {
+            // Cycle through colors for each character
+            int color = (i % 7) + 1; // Colors range from 1 to 7
+            SetConsoleTextAttribute(hConsole, color);
+
+            cout << tetrisArt[i]; // Print the character in its assigned color
+        }
+    }
+
+    // Set the console text color to teal
+    SetConsoleTextAttribute(hConsole,3 ); 
+    
+    cout << endl;
     cout << separator << endl; // Below title border
     cout << "\n";
 
-    padding = (consoleWidth - option1.size()) / 2;
-    cout << string(padding, ' ') << option1 << endl;
+    // Displaying menu options centered below the ASCII art
+    paddingForMenu = (consoleWidth - option1.size()) / 2;
+    cout << string(paddingForMenu, ' ') << option1 << endl;
 
-    padding = (consoleWidth - option2.size()) / 2;
-    cout << string(padding, ' ') << option2 << endl;
+    paddingForMenu = (consoleWidth - option2.size()) / 2;
+    cout << string(paddingForMenu, ' ') << option2 << endl;
 
-    padding = (consoleWidth - option3.size()) / 2;
-    cout << string(padding, ' ') << option3 << endl;
+    paddingForMenu = (consoleWidth - option3.size()) / 2;
+    cout << string(paddingForMenu, ' ') << option3 << endl;
+
+    paddingForMenu = (consoleWidth - option4.size()) / 2;
+    cout << string(paddingForMenu, ' ') << option4 << endl;
 
     cout << "\n";
     cout << separator << endl; // Bottom border
     cout << string((consoleWidth - 30) / 2, ' ') << "Select your option: ";
 
+    // Reset the color to default after displaying everything
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
+<<<<<<< Updated upstream:Others/Diluc.cpp
+=======
+void showScoreboard() {
+    system("cls"); // Clear the console
+    ifstream file("highscore.txt");
+    vector<pair<string, int>> scores;
+
+    if (file.is_open()) {
+        string name;
+        int score;
+        while (file >> name >> score) {
+            scores.push_back({name, score});
+        }
+        file.close();
+    }
+
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+
+    cout << "\n\n";
+    int consoleWidth = 50; // Adjust as needed
+    string title = "Scoreboard";
+    string separator(consoleWidth, '=');
+    int padding = (consoleWidth - title.size()) / 2;
+
+    cout << string(padding, ' ') << separator << endl;
+    cout << string(padding, ' ') << title << endl;
+    cout << string(padding, ' ') << separator << endl;
+
+    if (scores.empty()) {
+        cout << "\n";
+        string noGamesMessage = "No games have been played in the Advanced Mode.";
+        padding = (consoleWidth - noGamesMessage.size()) / 2;
+        cout << string(padding, ' ') << noGamesMessage << endl;
+    } else {
+        cout << "\n";
+        for (int i = 0; i < scores.size() && i < 10; ++i) {
+            string entry = to_string(i + 1) + ". " + scores[i].first + " - " + to_string(scores[i].second);
+            padding = (consoleWidth - entry.size()) / 2;
+            cout << string(padding, ' ') << entry << endl;
+        }
+    }
+
+    cout << "\n";
+    cout << string((consoleWidth - 20) / 2, ' ') << "Press any key to exit...";
+    _getch(); // Wait for user input
+
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+}
+
+>>>>>>> Stashed changes:Dts.cpp
 void startGame(bool advancedMode) {
     resetGameState(); // Reset the game state
 
     if (advancedMode) {
         cout << "Enter your username: ";
         cin >> username;
+<<<<<<< Updated upstream:Others/Diluc.cpp
         loadHighestScore(); // Load the highest score from the leaderboard
         cout << "Current Highest Score: " << highestScore << " by " << username << endl;
+=======
+        loadHighScore();
+        cout << "Current High Score: " << highScore << endl;
+        // cout<<"Do you want to customize? (y/n)"<<endl;
+        // char choice;
+        // choice = _getch();
+        // if(tolower(choice) == 'y'){
+            
+        // }
+>>>>>>> Stashed changes:Dts.cpp
     }
 
     initialize();
@@ -528,7 +667,7 @@ void startGame(bool advancedMode) {
 
     char choice;
     cout << "Do you want to play again? (y/n): ";
-    cin >> choice;
+    choice = _getch();
     if (choice == 'y' || choice == 'Y') {
         startGame(advancedMode);
     }
@@ -541,8 +680,10 @@ int main() {
         displayHomeWindow(); // Display the home window
 
         char mode;
-        cin >> mode;
+        // cin >> mode;
+        mode = _getch();
 
+<<<<<<< Updated upstream:Others/Diluc.cpp
         switch (tolower(mode)) { // Handle input case-insensitively
             case 'a':
                 startGame(true);
@@ -557,6 +698,24 @@ int main() {
                 cout << "\nInvalid input. Please select a valid option.\n";
                 Sleep(1000); // Pause for 1 second to show the error
                 break;
+=======
+        if (tolower(mode) == 'a') {
+            startGame(true);
+        } else if (tolower(mode) == 'q') {
+            startGame(false);
+        } else if (tolower(mode) == 's') {
+            showScoreboard();
+        } else if (tolower(mode) == 'e') {
+            saveHighScore();
+            return 0;
+        }else if(mode == 27){
+            saveHighScore();
+            exit(0);
+            break;
+        } else{
+            cout << "\nInvalid input. Please select a valid option.\n";
+            Sleep(1000); // Pause for 1 second to show the error
+>>>>>>> Stashed changes:Dts.cpp
         }
     }
 
