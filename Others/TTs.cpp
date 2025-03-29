@@ -420,11 +420,12 @@ void customizeGame() {
         cout << "===================\n";
         cout << "Enter your choice: ";
 
-        int choice;
-        cin >> choice;
+        char choice;
+        // cin >> choice;
+        choice = _getch();
 
         switch (choice) {
-            case 1: {
+            case '1': {
                 // Change Tetromino Colors
                 system("cls");
                 cout << "Change Tetromino Colors\n";
@@ -440,14 +441,16 @@ void customizeGame() {
                 cout << "========================\n";
                 cout << "Enter your choice: ";
 
-                int colorChoice;
-                cin >> colorChoice;
+                char colorChoice;
+                // cin >> colorChoice;
+                colorChoice = _getch();
 
-                if (colorChoice >= 1 && colorChoice <= 7) {
+                if (colorChoice >= '1' && colorChoice <= '7') {
                     cout << "Enter new color code (1-15):\n";
                     displayColorOptions(); // Show color options with examples
                     int newColor;
                     cin >> newColor;
+                    // newColor = _getch();
 
                     if (newColor >= 1 && newColor <= 15) {
                         tetrominoColors[colorChoice - 1] = newColor;
@@ -465,7 +468,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case 2: {
+            case '2': {
                 // Change Frame Color
                 system("cls");
                 cout << "Change Frame Color\n";
@@ -474,6 +477,7 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
+                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     frameColor = newColor; // Update the global frame color variable
@@ -486,7 +490,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case 3: {
+            case '3': {
                 // Change Fallen Blocks Color
                 system("cls");
                 cout << "Change Fallen Blocks Color\n";
@@ -495,6 +499,7 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
+                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     fallenBlockColor = newColor; // Update the global fallen block color variable
@@ -507,7 +512,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case 4: {
+            case '4': {
                 // Change Home and Pause Window Text Color
                 system("cls");
                 cout << "Change Home and Pause Window Text Color\n";
@@ -516,6 +521,7 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
+                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     menuTextColor = newColor; // Update the global menu text color variable
@@ -528,7 +534,7 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case 5: {
+            case '5': {
                 // Change Current Score Text Color
                 system("cls");
                 cout << "Change Current Score Text Color\n";
@@ -537,6 +543,7 @@ void customizeGame() {
                 displayColorOptions(); // Show color options with examples
                 int newColor;
                 cin >> newColor;
+                // newColor = _getch();
 
                 if (newColor >= 1 && newColor <= 15) {
                     scoreTextColor = newColor; // Update the global score text color variable
@@ -549,12 +556,12 @@ void customizeGame() {
                 _getch();
                 break;
             }
-            case 6: {
+            case '6': {
                 // Reset to Default
                 resetToDefault();
                 break;
             }
-            case 7:
+            case '7':
                 return; // Back to main menu
             default:
                 cout << "Invalid choice. Please try again.\n";
