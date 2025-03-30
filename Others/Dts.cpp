@@ -16,18 +16,14 @@ using namespace std::chrono;
 const int width = 10;
 const int height = 20;
 vector<vector<int>> grid(height, vector<int>(width, 0));
-int score = 0;
-int level = 1;
-int linesCleared = 0;
+int score = 0, level = 1, linesCleared = 0;
 string username;
-int highScore = 0;
+int highScore = 0, globalHighScore = 0;
+
 int frameColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 int fallenBlockColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 int menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 int scoreTextColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-
-// Add a global variable to store the high score
-int globalHighScore = 0;
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominos = {
@@ -52,8 +48,7 @@ vector<int> tetrominoColors = {
 
 struct Tetromino {
     vector<vector<int>> shape;
-    int x, y;
-    int color;
+    int x, y, color;
 };
 
 Tetromino currentTetromino;
@@ -476,11 +471,12 @@ void customizeGame() {
         cout << "===================\n";
         cout << "Enter your choice: ";
 
-        int choice;
-        cin >> choice;
+        char choice ;
+        // cin >> choice;
+        choice = _getch(); // Use _getch() to get a single character input
 
         switch (choice) {
-            case 1: {
+            case '1': {
                 // Change Tetromino Colors
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -523,7 +519,7 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 2: {
+            case '2': {
                 // Change Frame Color
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -549,7 +545,7 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 3: {
+            case '3': {
                 // Change Fallen Blocks Color
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -575,7 +571,7 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 4: {
+            case '4': {
                 // Change Home Window Text Color
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -601,7 +597,7 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 5: {
+            case '5': {
                 // Change Pause Window Text Color
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -627,7 +623,7 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 6: {
+            case '6': {
                 // Change Customization Menu Text Color
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -653,7 +649,7 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 7: {
+            case '7': {
                 // Change Current Score Text Color
                 system("cls");
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
@@ -679,13 +675,13 @@ void customizeGame() {
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 8: {
+            case '8': {
                 // Reset to Default
                 resetToDefault();
                 Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 9:
+            case '9':
                 return; // Back to main menu
             default:
                 cout << "\nInvalid choice. Please try again.\n";
