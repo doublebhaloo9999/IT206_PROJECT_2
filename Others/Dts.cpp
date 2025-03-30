@@ -921,12 +921,16 @@ void updateLeaderboard(int finalScore, bool advancedMode) {
     // Check if the score qualifies for the leaderboard
     string name;
     if (leaderboard.size() < 10 || finalScore > leaderboard.back().second) {
-        cout << "Congratulations! Your score qualifies for the leaderboard.\n";
-        cout << "Enter your username (or type 'n' to skip): ";
-        cin >> name;
+        if (!advancedMode) { // Ask for username only in Quickie Mode
+            cout << "Congratulations! Your score qualifies for the leaderboard.\n";
+            cout << "Enter your username (or type 'n' to skip): ";
+            cin >> name;
 
-        if (name == "n" || name == "N") {
-            name = "UNKNOWN";
+            if (name == "n" || name == "N") {
+                name = "UNKNOWN";
+            }
+        } else {
+            name = username; // Use the username provided at the start of Advanced Mode
         }
 
         leaderboard.push_back({name, finalScore});
