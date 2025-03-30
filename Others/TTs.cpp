@@ -223,7 +223,7 @@ void displayPauseMenu() {
     string option4 = "(ESC/B) Back to Home";
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, menuTextColor); // Use customizable menu text color
+    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color for pause menu
 
     cout << "\n";
     cout << separator << endl; // Top border
@@ -256,6 +256,8 @@ void displayHomeWindow() {
     string option4 = "(C) Customize";
     string option5 = "(E/Esc) Exit";
 
+    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+
     // ASCII Art for "Tetris"
     string tetrisArt = R"(
   TTTTTT  EEEEEE  TTTTTT  RRRRRR   IIIIII  SSSSSS
@@ -265,11 +267,10 @@ void displayHomeWindow() {
     TT    EEEEEE    TT    RR RRR   IIIIII  SSSSSS
     )";
 
-    // Calculate the padding for center alignment of ASCII art
+// Calculate the padding for center alignment of ASCII art
     int paddingForArt = (consoleWidth - 70) / 2;  // Width of the ASCII art
     int leftMargin = 10; // Fixed left margin for options
 
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     
     // Set the console text color to teal
     SetConsoleTextAttribute(hConsole, 3); 
@@ -278,37 +279,32 @@ void displayHomeWindow() {
     cout << "\n";
     cout << separator << endl; // Top border
 
-    // Loop through each character in the ASCII art and change colors
+    // Display ASCII art with color-changing effect
     for (int i = 0; i < tetrisArt.length(); i++) {
         if (tetrisArt[i] == '\n') {
             cout << endl; // Print newline character as normal
         } else {
-            // Cycle through colors for each character
-            int color = (i % 7) + 1; // Colors range from 1 to 7
+            int color = (i % 7) + 1; // Cycle through colors (1 to 7)
             SetConsoleTextAttribute(hConsole, color);
-
-            cout << tetrisArt[i]; // Print the character in its assigned color
+            cout << tetrisArt[i];
         }
     }
 
-    // Set the console text color to teal
-    SetConsoleTextAttribute(hConsole, 3); 
-    
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
     cout << endl;
     cout << separator << endl; // Below title border
     cout << "\n";
 
-    // Displaying menu options with left alignment
-    cout << string(leftMargin, ' ') << option1 << endl;
-    cout << string(leftMargin, ' ') << option2 << endl;
-    cout << string(leftMargin, ' ') << option3 << endl;
-    cout << string(leftMargin, ' ') << option4 << endl;
-    cout << string(leftMargin, ' ') << option5 << endl;
+    // Displaying menu options
+    cout << option1 << endl;
+    cout << option2 << endl;
+    cout << option3 << endl;
+    cout << option4 << endl;
+    cout << option5 << endl;
 
     cout << "\n";
     cout << separator << endl; // Bottom border
 
-    // Reset the color to default after displaying everything
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
@@ -417,9 +413,7 @@ void showLeaderboard() {
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
 }
 
-void displayColorOptions() {
-    HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-
+void displayColorTemplate(HANDLE hConsole, int originalColor) {
     // Array of color names corresponding to color codes
     string colorNames[] = {
         "Black", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White",
@@ -434,7 +428,7 @@ void displayColorOptions() {
         cout << i << ". " << colorNames[i] << "\n"; // Display the color code and its name
     }
 
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    SetConsoleTextAttribute(hConsole, originalColor); // Restore the original text color
     cout << "=================\n";
 }
 
@@ -463,20 +457,22 @@ void resetToDefault() {
 void customizeGame() {
     system("cls"); // Clear the console
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
 
     while (true) {
         system("cls");
+        SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
         cout << "\n\n";
         cout << "Customize Your Game\n";
         cout << "===================\n";
         cout << "1. Change Tetromino Colors\n";
         cout << "2. Change Frame Color\n";
         cout << "3. Change Fallen Blocks Color\n";
-        cout << "4. Change Home and Pause Window Text Color\n";
-        cout << "5. Change Current Score Text Color\n";
-        cout << "6. Reset to Default\n";
-        cout << "7. Back to Menu\n";
+        cout << "4. Change Home Window Text Color\n";
+        cout << "5. Change Pause Window Text Color\n";
+        cout << "6. Change Customization Menu Text Color\n";
+        cout << "7. Change Current Score Text Color\n";
+        cout << "8. Reset to Default\n";
+        cout << "9. Back to Menu\n";
         cout << "===================\n";
         cout << "Enter your choice: ";
 
@@ -487,16 +483,13 @@ void customizeGame() {
             case 1: {
                 // Change Tetromino Colors
                 system("cls");
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
                 cout << "Change Tetromino Colors\n";
                 cout << "========================\n";
-                cout << "1. I Tetromino (Current Color: Blue)\n";
-                cout << "2. T Tetromino (Current Color: Purple)\n";
-                cout << "3. Z Tetromino (Current Color: Red)\n";
-                cout << "4. S Tetromino (Current Color: Green)\n";
-                cout << "5. O Tetromino (Current Color: White)\n";
-                cout << "6. L Tetromino (Current Color: Yellow)\n";
-                cout << "7. J Tetromino (Current Color: Cyan)\n";
-                cout << "8. Back to Customization Menu\n";
+                for (int i = 0; i < tetrominoColors.size(); ++i) {
+                    cout << i + 1 << ". Tetromino " << char('I' + i) << " (Current Color: " << tetrominoColors[i] << ")\n";
+                }
+                cout << tetrominoColors.size() + 1 << ". Back to Customization Menu\n";
                 cout << "========================\n";
                 cout << "Enter your choice: ";
 
@@ -504,124 +497,203 @@ void customizeGame() {
                 cin >> colorChoice;
 
                 if (colorChoice >= 1 && colorChoice <= 7) {
-                    cout << "Enter new color code (1-15):\n";
-                    displayColorOptions(); // Show color options with examples
+                    int index = colorChoice - 1;
+                    cout << "\nCurrent Color: " << tetrominoColors[index] << "\n";
+                    cout << "Enter new color code (1-15) or '0' to go back: ";
+                    displayColorTemplate(hConsole, menuTextColor);
                     int newColor;
                     cin >> newColor;
 
+                    if (newColor == 0) {
+                        break; // Go back without changing the color
+                    }
+
                     if (newColor >= 1 && newColor <= 15) {
-                        tetrominoColors[colorChoice - 1] = newColor;
-                        cout << "Color updated successfully!\n";
+                        tetrominoColors[index] = newColor;
+                        cout << "\nColor updated successfully!\n";
                     } else {
-                        cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                        cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
                     }
                 } else if (colorChoice == 8) {
                     break; // Back to customization menu
                 } else {
-                    cout << "Invalid choice. Please try again.\n";
+                    cout << "\nInvalid choice. Please try again.\n";
                 }
 
-                cout << "Press any key to return...";
-                _getch();
+                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case 2: {
                 // Change Frame Color
                 system("cls");
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
                 cout << "Change Frame Color\n";
                 cout << "==================\n";
-                cout << "Enter new color code for the frame (1-15):\n";
-                displayColorOptions(); // Show color options with examples
+                cout << "Current Color: " << frameColor << "\n";
+                cout << "Enter new color code (1-15) or '0' to go back: ";
+                displayColorTemplate(hConsole, menuTextColor);
                 int newColor;
                 cin >> newColor;
 
-                if (newColor >= 1 && newColor <= 15) {
-                    frameColor = newColor; // Update the global frame color variable
-                    cout << "Frame color updated successfully!\n";
-                } else {
-                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                if (newColor == 0) {
+                    break; // Go back without changing the color
                 }
 
-                cout << "Press any key to return...";
-                _getch();
+                if (newColor >= 1 && newColor <= 15) {
+                    frameColor = newColor;
+                    cout << "\nFrame color updated successfully!\n";
+                } else {
+                    cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case 3: {
                 // Change Fallen Blocks Color
                 system("cls");
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
                 cout << "Change Fallen Blocks Color\n";
                 cout << "==========================\n";
-                cout << "Enter new color code for fallen blocks (1-15):\n";
-                displayColorOptions(); // Show color options with examples
+                cout << "Current Color: " << fallenBlockColor << "\n";
+                cout << "Enter new color code (1-15) or '0' to go back: ";
+                displayColorTemplate(hConsole, menuTextColor);
                 int newColor;
                 cin >> newColor;
 
-                if (newColor >= 1 && newColor <= 15) {
-                    fallenBlockColor = newColor; // Update the global fallen block color variable
-                    cout << "Fallen blocks color updated successfully!\n";
-                } else {
-                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                if (newColor == 0) {
+                    break; // Go back without changing the color
                 }
 
-                cout << "Press any key to return...";
-                _getch();
+                if (newColor >= 1 && newColor <= 15) {
+                    fallenBlockColor = newColor;
+                    cout << "\nFallen blocks color updated successfully!\n";
+                } else {
+                    cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case 4: {
-                // Change Home and Pause Window Text Color
+                // Change Home Window Text Color
                 system("cls");
-                cout << "Change Home and Pause Window Text Color\n";
-                cout << "=======================================\n";
-                cout << "Enter new color code for menu text (1-15):\n";
-                displayColorOptions(); // Show color options with examples
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                cout << "Change Home Window Text Color\n";
+                cout << "=============================\n";
+                cout << "Current Color: " << menuTextColor << "\n";
+                cout << "Enter new color code (1-15) or '0' to go back: ";
+                displayColorTemplate(hConsole, menuTextColor);
                 int newColor;
                 cin >> newColor;
 
-                if (newColor >= 1 && newColor <= 15) {
-                    menuTextColor = newColor; // Update the global menu text color variable
-                    cout << "Menu text color updated successfully!\n";
-                } else {
-                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                if (newColor == 0) {
+                    break; // Go back without changing the color
                 }
 
-                cout << "Press any key to return...";
-                _getch();
+                if (newColor >= 1 && newColor <= 15) {
+                    menuTextColor = newColor;
+                    cout << "\nHome window text color updated successfully!\n";
+                } else {
+                    cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case 5: {
-                // Change Current Score Text Color
+                // Change Pause Window Text Color
                 system("cls");
-                cout << "Change Current Score Text Color\n";
-                cout << "===============================\n";
-                cout << "Enter new color code for the score text (1-15):\n";
-                displayColorOptions(); // Show color options with examples
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                cout << "Change Pause Window Text Color\n";
+                cout << "==============================\n";
+                cout << "Current Color: " << menuTextColor << "\n";
+                cout << "Enter new color code (1-15) or '0' to go back: ";
+                displayColorTemplate(hConsole, menuTextColor);
                 int newColor;
                 cin >> newColor;
 
-                if (newColor >= 1 && newColor <= 15) {
-                    scoreTextColor = newColor; // Update the global score text color variable
-                    cout << "Score text color updated successfully!\n";
-                } else {
-                    cout << "Invalid color code. Please enter a value between 1 and 15.\n";
+                if (newColor == 0) {
+                    break; // Go back without changing the color
                 }
 
-                cout << "Press any key to return...";
-                _getch();
+                if (newColor >= 1 && newColor <= 15) {
+                    menuTextColor = newColor;
+                    cout << "\nPause window text color updated successfully!\n";
+                } else {
+                    cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case 6: {
-                // Reset to Default
-                resetToDefault();
+                // Change Customization Menu Text Color
+                system("cls");
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                cout << "Change Customization Menu Text Color\n";
+                cout << "====================================\n";
+                cout << "Current Color: " << menuTextColor << "\n";
+                cout << "Enter new color code (1-15) or '0' to go back: ";
+                displayColorTemplate(hConsole, menuTextColor);
+                int newColor;
+                cin >> newColor;
+
+                if (newColor == 0) {
+                    break; // Go back without changing the color
+                }
+
+                if (newColor >= 1 && newColor <= 15) {
+                    menuTextColor = newColor;
+                    cout << "\nCustomization menu text color updated successfully!\n";
+                } else {
+                    cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
-            case 7:
+            case 7: {
+                // Change Current Score Text Color
+                system("cls");
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                cout << "Change Current Score Text Color\n";
+                cout << "===============================\n";
+                cout << "Current Color: " << scoreTextColor << "\n";
+                cout << "Enter new color code (1-15) or '0' to go back: ";
+                displayColorTemplate(hConsole, menuTextColor);
+                int newColor;
+                cin >> newColor;
+
+                if (newColor == 0) {
+                    break; // Go back without changing the color
+                }
+
+                if (newColor >= 1 && newColor <= 15) {
+                    scoreTextColor = newColor;
+                    cout << "\nScore text color updated successfully!\n";
+                } else {
+                    cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
+                }
+
+                Sleep(1000); // Pause for 1 second to show the message
+                break;
+            }
+            case 8: {
+                // Reset to Default
+                resetToDefault();
+                Sleep(1000); // Pause for 1 second to show the message
+                break;
+            }
+            case 9:
                 return; // Back to main menu
             default:
-                cout << "Invalid choice. Please try again.\n";
-                cout << "Press any key to return...";
-                _getch();
+                cout << "\nInvalid choice. Please try again.\n";
+                Sleep(1000); // Pause for 1 second to show the error
                 break;
         }
+
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
     }
 }
 
