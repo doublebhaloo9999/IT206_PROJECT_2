@@ -825,21 +825,69 @@ void gameLoop() {
         }
     }
 
+    // Animated "Game Over" sequence in blood red color
+    const string FRAME_PART1 = 
+        "\n"
+        "        .-''''''''-.  \n"
+        "       /            \\  \n"
+        "      |              |  \n"
+        "      |,  .-.  .-.  ,|  \n"
+        "      | )(_o/   \\o_)(|  \n"
+        "      |/     /\\    \\|   \n"
+        "      (_     ^^     _)  \n"
+        "       \\__|IIIIII|__/  \n"
+        "        |\\       | |    \n"
+        "        | \\IIIIIII |  \n"
+        "        \\  ~  ~   /\"\"/  \n"
+        "         `--------`  \n";
+
+    const string FRAME_PART2 = 
+        "\n"
+        "        .-''''''''''-.   \n"
+        "       /              \\  \n"
+        "      |               |  \n"
+        "      |,  .-.  .-.  , |  \n"
+        "      | )(_o/  \\o_)( |  \n"
+        "      |/     /\\      \\|  \n"
+        "      (_     ^^      _)  \n"
+        "       \\__|IIIIII|__/  \n"
+        "        |  \\IIIIII/ |  \n"
+        "        \\         /\"\"/  \n"
+        "         `----------`  \n";
+
+    string frames[] = {FRAME_PART1, FRAME_PART2, FRAME_PART1, FRAME_PART2};
+    for (int i = 0; i < 10; i++) { // Loop animation
+        system("cls");
+        SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Blood red color
+        cout << frames[i % 4] << endl;
+        Sleep(600); // Pause for 600ms
+    }
+
     // Smooth transition to Game Over screen
     system("cls");
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Red color for Game Over
 
     int consoleWidth = 70; // Adjust to match the screen width
     string border(consoleWidth, '=');
-    string gameOverText = "GAME OVER";
+
+    cout << "\n\n";
+    cout << border << endl << endl ;
+
+    // Print the Game Over text directly
+    cout << u8"   ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗  \n";
+    cout << u8"  ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██║ \n";
+    cout << u8"  ██║  ███╗███████║██╔████╔██║█████╗      ██║   ██║██║   ██║█████╗  ██████╝ \n";
+    cout << u8"  ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║██║   ██║██╔══╝  █████║  \n";
+    cout << u8"  ██║   ██║██╔══██║██║╚██╔╝██║██║         ██║   ██║██║   ██║██║     ██║ ██║    \n";
+    cout << u8"  ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝╚██████╔╝███████╗██║  ██║   \n";
+    cout << u8"   ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚══▀▀═╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝     \n";
+
+    cout << border << endl << endl ;
+
     string scoreText = "Your Score: " + to_string(score);
     string highScoreText = (score > highScore) ? "New High Score: " + to_string(score) + "!" : "High Score: " + to_string(highScore);
     string exitText = "Press any key to return to the home window...";
 
-    cout << "\n\n";
-    cout << border << endl;
-    cout << string((consoleWidth - gameOverText.size()) / 2, ' ') << gameOverText << endl;
-    cout << border << endl;
     cout << "\n";
     cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
     cout << string((consoleWidth - highScoreText.size()) / 2, ' ') << highScoreText << endl;
@@ -923,6 +971,8 @@ void startGame(bool advancedMode) {
 
 // Modify main() to initialize globalHighScore at the start
 int main() {
+    // Set console to UTF-8 mode
+    SetConsoleOutputCP(CP_UTF8);
     srand(time(0)); // Initialize random seed
     loadHighScoreFromLeaderboard(); // Initialize globalHighScore
 
