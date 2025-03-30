@@ -464,9 +464,9 @@ void customizeGame() {
         cout << "\n\n";
         cout << "Customize Your Game\n";
         cout << "===================\n";
-        cout << "1. Change Tetromino Colors\n";
+        cout << "1. Change Falling Tetromino Colors\n";
         cout << "2. Change Frame Color\n";
-        cout << "3. Change Fallen Blocks Color\n";
+        cout << "3. Change Settled Blocks Color\n";
         cout << "4. Change Home Window Text Color\n";
         cout << "5. Change Pause Window Text Color\n";
         cout << "6. Change Customization Menu Text Color\n";
