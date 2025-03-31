@@ -1,91 +1,62 @@
 # Tetris Game Project
 
-This project is a console-based implementation of the classic Tetris game, written in C++. It includes various features such as customizable colors, leaderboard tracking, and multiple game modes.
+## Overview
+This project is a console-based **Tetris Game** implemented in C++ with customizable features, leaderboard functionality, and two game modes: **Quickie Mode** and **Advanced Mode**. The game includes features such as tetromino rotation, line clearing, scoring, and a leaderboard to track high scores.
+
+---
 
 ## Features
+### Gameplay
+- **Tetromino Movement and Rotation**: Move tetrominoes left, right, down, or rotate them.
+- **Line Clearing**: Clear lines to earn points and progress to higher levels.
+- **Game Over Detection**: The game ends when tetrominoes stack up to the top of the grid.
 
-- **Game Modes**:
-  - **Quickie Mode**: A fast-paced version of the game.
-  - **Advanced Mode**: Includes leaderboard tracking and username input.
-  
-- **Leaderboard**:
-  - Tracks the top 10 scores.
-  - Allows players to enter their username if their score qualifies.
+### Game Modes
+1. **Quickie Mode**: Play without entering a username. Scores are not saved unless they qualify for the leaderboard.
+2. **Advanced Mode**: Enter a username and compete for the global high score.
 
-- **Customization**:
-  - Change colors for tetrominoes, frame, fallen blocks, menu text, and score text.
-  - Reset all settings to default.
-
-- **Pause Menu**:
-  - Options to restart, resume, customize, or return to the home screen.
-
-- **Dynamic Difficulty**:
-  - The game increases in difficulty as the player clears more lines.
-
-## How to Play
-
-1. **Controls**:
-   - Arrow keys or `W`, `A`, `S`, `D` to move and rotate tetrominoes.
-   - Spacebar to drop the tetromino instantly.
-   - `ESC` or `Enter` to open the pause menu.
-
-2. **Objective**:
-   - Clear as many lines as possible by completing horizontal rows without gaps.
-   - Avoid letting the tetrominoes stack to the top of the grid.
-
-3. **Scoring**:
-   - Earn points for clearing lines.
-   - Bonus points for clearing multiple lines at once.
-
-## Customization Options
-
-- Change the colors of:
-  - Tetrominoes (I, T, Z, S, O, L, J shapes).
-  - Game frame.
-  - Fallen blocks.
-  - Menu text.
-  - Score text.
-
+### Customization
+- Change colors for:
+  - Tetrominoes
+  - Frame
+  - Fallen blocks
+  - Home window text
+  - Pause menu text
+  - Score text
 - Reset all settings to default.
 
-## Leaderboard
+### Leaderboard
+- Tracks the top 10 scores.
+- Separate leaderboard for Quickie Mode and Advanced Mode.
+- Saves leaderboard data to a file (`leaderboard.txt`).
 
-- The leaderboard tracks the top 10 scores in Advanced Mode.
-- Players can enter their username if their score qualifies.
-- The leaderboard is saved in a file named `leaderboard.txt`.
+### Graphics
+- ASCII-based rendering of the game grid.
+- Colorful tetrominoes and UI elements.
+- Animated "Game Over" screen.
 
-## Files
+---
 
-- **`TTs.cpp`**: The main source code for the game.
-- **`leaderboard.txt`**: Stores the leaderboard data.
+## How to Play
+### Controls
+- **Arrow Keys**:
+  - Left: Move tetromino left.
+  - Right: Move tetromino right.
+  - Down: Move tetromino down faster.
+  - Up: Rotate tetromino.
+- **Spacebar**: Drop tetromino to the bottom instantly.
+- **ESC/Enter**: Open the pause menu.
+- **W/A/S/D**: Alternative controls for movement and rotation.
 
-## How to Run
+### Pause Menu Options
+- **R**: Restart the game.
+- **Enter**: Resume the game.
+- **M**: Open the customization menu.
+- **ESC/B**: Return to the home window.
 
-1. Compile the program using a C++ compiler that supports C++11 or later.
-   ```
-   g++ -o Tetris TTs.cpp
-   ```
-2. Run the compiled executable.
-   ```
-   ./Tetris
-   ```
+---
 
-## Requirements
-
-- Windows OS (uses `conio.h` and `windows.h` for console manipulation).
-- A C++ compiler (e.g., GCC, MSVC).
-
-## Known Issues
-
-- The game is designed for Windows and may not work on other operating systems due to platform-specific libraries.
-- Ensure the console window is large enough to display the game properly.
-
-## Future Enhancements
-
-- Add support for multiplayer mode.
-- Implement sound effects and background music.
-- Port the game to other platforms.
-
-## License
-
-This project is for educational purposes and is not intended for commercial use.
+## Installation and Setup
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/IT206_PROJECT_2.git
