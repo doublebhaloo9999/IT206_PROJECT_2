@@ -138,16 +138,9 @@ void clearFullLines() {
                     currentScore += 100;
                     break;
             }
-            // currentScore += 100;
+    
             totalLinesCleared++;
 
-            // Adjust speed dynamically based on cleared lines
-            // if (isSpeedDynamic && totalLinesCleared % 5 == 0) {
-            //     currentLevel++;
-            //     fallInterval = max(50, 500 - (currentLevel - 1) * 50); // Minimum interval is 50ms
-            // }
-
-            // Recheck the same row after shifting
             row++;
         }
     }
