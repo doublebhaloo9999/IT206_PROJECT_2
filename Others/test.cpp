@@ -241,7 +241,7 @@ void displayPauseMenu() {
     string option4 = "(ESC/B) Back to Home";
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, 2); // Green color for pause menu
+    SetConsoleTextAttribute(hConsole, menuTextColor); // Use the Pause Menu text color
 
     cout << "\n";
     cout << separator << endl; // Top border
@@ -260,7 +260,7 @@ void displayPauseMenu() {
     cout << "\n";
     cout << separator << endl; // Bottom border
 
-    SetConsoleTextAttribute(hConsole, 15); // Reset to default white
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default white
 }
 
 void displayHomeWindow() {
@@ -457,20 +457,21 @@ void resetToDefault() {
     menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Default green
     scoreDisplayColor = 11; // Default teal
     customizationMenuTextColor = 3; // Default teal
+    homeWindowTextColor = 3; // Default teal for the Home Window
 
     tetrominoColors = {
-        9, // I
+        9,  // I
         13, // T
         12, // Z
         10, // S
         15, // O
         14, // L
-        11 // J
+        11  // J
     };
 
-    cout << "All settings have been reset to default values.\n";
+    cout << "\nAll settings have been reset to default values.\n";
     cout << "Press any key to return to the customization menu...";
-    _getch();
+    _getch(); // Wait for user input
 }
 
 // Add a new menu option for adjusting speed in customizeGame
