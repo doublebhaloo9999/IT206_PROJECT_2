@@ -1,149 +1,93 @@
 # Tetris Game Project
 
-Welcome to the **Tetris Game Project**, a modernized and customizable version of the classic Tetris game. This project is built using C++ and leverages the Windows Console for rendering and user interaction.
+This project is a console-based implementation of the classic **Tetris** game, written in C++. It features customizable gameplay, dynamic speed adjustments, and a leaderboard system to track high scores.
 
----
+## Features
 
-## 📖 Overview
-
-This project is a console-based Tetris game designed to provide an engaging and customizable gaming experience. It includes features like dynamic speed adjustment, leaderboard tracking, and various customization options for colors and gameplay modes.
-
----
-
-## ✨ Features
-
-- **Dynamic Gameplay**: Speed increases as you clear more lines, making the game progressively challenging.
-- **Two Game Modes**:
+- **Game Modes**:
   - **Quickie Mode**: A casual mode for quick gameplay.
   - **Advanced Mode**: A competitive mode with leaderboard tracking.
-- **Leaderboard**: Tracks the top 10 scores for Advanced Mode.
+- **Dynamic Speed**: The game speed increases as you clear more lines.
 - **Customization**:
-  - Change Tetromino colors.
-  - Customize frame, text, and score display colors.
-  - Adjust game speed to match your skill level.
-- **Pause Menu**: Pause the game anytime and access options like restart, resume, or customization.
+  - Change colors for Tetrominoes, borders, and text.
+  - Adjust game speed with predefined difficulty levels.
+- **Leaderboard**:
+  - Tracks top scores for Advanced Mode.
+  - Allows players to save their scores with usernames.
+- **Pause Menu**:
+  - Options to restart, resume, customize, or return to the home screen.
 - **Game Over Animation**: A visually appealing "Game Over" sequence.
 
----
+## Controls
 
-## 🛠️ Installation
+- **Arrow Keys**:
+  - Left: Move Tetromino left.
+  - Right: Move Tetromino right.
+  - Down: Move Tetromino down.
+  - Up: Rotate Tetromino.
+- **W/A/S/D**: Alternative controls for movement and rotation.
+- **Spacebar**: Instantly drop the Tetromino.
+- **Enter**: Open the pause menu.
+- **ESC**: Open the pause menu or exit the game.
 
-1. **Clone the Repository**:
+## Customization Options
+
+- Change colors for:
+  - Tetrominoes
+  - Borders
+  - Settled blocks
+  - Text in menus and score displays
+- Adjust game speed with difficulty levels:
+  - GrandMaster, Expert, Advanced, Hard, Normal, NOOB
+- Reset all settings to default.
+
+## How to Run
+
+1. **Prerequisites**:
+   - A Windows system with a C++ compiler (e.g., MinGW or Visual Studio).
+   - Console support for ANSI escape codes (for color rendering).
+
+2. **Compile the Code**:
+   Use a C++ compiler to compile the `test.cpp` file. For example:
    ```bash
-   git clone https://github.com/your-username/IT206_PROJECT_2.git
-   cd IT206_PROJECT_2
+   g++ -o tetris test.cpp
    ```
 
-2. **Build the Project**:
-   - Open the project in your preferred C++ IDE (e.g., Visual Studio).
-   - Ensure the project is set to compile for Windows Console Applications.
-   - Build and run the project.
-
-3. **Run the Executable**:
-   - Navigate to the output directory (e.g., `Debug` or `Release`).
-   - Run the `Dts.exe` file.
-
----
-
-## 🚀 Usage
-
-1. **Start the Game**:
-   - Launch the executable.
-   - Select a game mode from the home menu:
-     - `(Q)` Quickie Mode
-     - `(A)` Advanced Mode
-     - `(L)` Leaderboard
-     - `(C)` Customize
-     - `(E)` Exit
-
-2. **Controls**:
-   - **Arrow Keys**: Move the Tetromino left, right, or down.
-   - **Up Arrow**: Rotate the Tetromino.
-   - **Spacebar**: Drop the Tetromino instantly.
-   - **ESC/Enter**: Open the pause menu.
-
-3. **Pause Menu Options**:
-   - `(R)` Restart the game.
-   - `(Enter)` Resume the game.
-   - `(C)` Customize game settings.
-   - `(ESC/B)` Return to the home menu.
-
-4. **Customization**:
-   - Access the customization menu to change colors and adjust game speed.
-
----
-
-## 🎨 Customization
-
-The game offers extensive customization options:
-
-- **Tetromino Colors**: Change the colors of individual Tetromino shapes.
-- **Frame Color**: Customize the border color of the game grid.
-- **Text Colors**: Modify the colors of menu text, pause menu text, and score display.
-- **Game Speed**: Choose from predefined speed levels (e.g., GrandMaster, Expert, Normal, NOOB).
-
-To access these options, select `(C)` Customize from the home menu or pause menu.
-
----
-
-## 📊 Leaderboard
-
-The leaderboard tracks the top 10 scores in Advanced Mode. Scores are saved in a `leaderboard.txt` file and are sorted in descending order. Players can enter their username to save their scores.
-
----
-
-## 🧑‍💻 Contribution
-
-We welcome contributions to enhance the game! Here's how you can contribute:
-
-1. **Fork the Repository**: Click the "Fork" button on GitHub.
-2. **Clone Your Fork**:
+3. **Run the Game**:
+   Execute the compiled binary:
    ```bash
-   git clone https://github.com/your-username/IT206_PROJECT_2.git
+   ./tetris
    ```
-3. **Create a Branch**:
-   ```bash
-   git checkout -b feature-name
-   ```
-4. **Make Changes**: Implement your feature or fix.
-5. **Commit Changes**:
-   ```bash
-   git commit -m "Add feature-name"
-   ```
-6. **Push Changes**:
-   ```bash
-   git push origin feature-name
-   ```
-7. **Submit a Pull Request**: Open a pull request on the original repository.
 
----
+4. **Gameplay**:
+   - Select a mode from the home screen.
+   - Use the controls to play the game.
+   - Customize settings or view the leaderboard as needed.
 
-## 📂 File Structure
+## File Structure
 
-```
-IT206_PROJECT_2/
-├── Others/
-│   ├── Dts.cpp         # Main game logic and rendering
-│   ├── leaderboard.txt # Stores leaderboard data
-├── README.md           # Project documentation
-└── highscore.txt       # Stores high scores for Advanced Mode
-```
+- **test.cpp**: The main source code for the game.
+- **leaderboard.txt**: Stores the leaderboard data.
+- **highscore.txt**: Stores personal high scores.
 
----
+## Known Issues
 
-## 📜 License
+- The game is designed for Windows and may not work on other operating systems due to dependencies like `windows.h` and `conio.h`.
+- Console resizing may affect the display layout.
 
-This project is licensed under the [MIT License](LICENSE).
+## Future Enhancements
 
----
+- Add support for multiplayer mode.
+- Implement sound effects and background music.
+- Port the game to other platforms (e.g., Linux, macOS).
 
-## 📧 Contact
+## License
 
-For questions or feedback, feel free to reach out:
+This project is for educational purposes and is not intended for commercial use.
 
-- **Email**: your-email@example.com
-- **GitHub**: [your-username](https://github.com/your-username)
+## Acknowledgments
 
----
+- ASCII art and color effects inspired by various online resources.
+- Classic Tetris gameplay mechanics.
 
-Enjoy the game and happy coding! 🎮
+Enjoy the game!
