@@ -23,7 +23,7 @@ int personalHighScore = 0, globalHighScore = 0;
 // Default colors for various elements
 int borderColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
 int settledBlockColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-int menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+int menuTextColor = 3 ; // Teal color
 int scoreDisplayColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
 
 // Tetromino shapes and colors
