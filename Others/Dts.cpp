@@ -21,10 +21,10 @@ string playerName;
 int personalHighScore = 0, globalHighScore = 0;
 
 // Default colors for various elements
-int borderColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-int settledBlockColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+int borderColor = 15; // Default white
+int settledBlockColor = 15; // Default white
 int menuTextColor = 3 ; // Teal color
-int scoreDisplayColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+int scoreDisplayColor = 11; // Teal color
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominoShapes = {
@@ -38,13 +38,13 @@ vector<vector<vector<int>>> tetrominoShapes = {
 };
 
 vector<int> tetrominoColors = {
-    FOREGROUND_BLUE | FOREGROUND_INTENSITY, // I
-    FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY, // T
-    FOREGROUND_RED | FOREGROUND_INTENSITY, // Z
-    FOREGROUND_GREEN | FOREGROUND_INTENSITY, // S
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, // O
-    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY, // L
-    FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY // J
+    9,  // I
+    13, // T
+    12, // Z
+    10, // S
+    15, // O
+    14, // L
+    11  // J
 };
 
 struct Tetromino {
@@ -239,7 +239,7 @@ void displayPauseMenu() {
     string option4 = "(ESC/B) Back to Home";
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Green color for pause menu
+    SetConsoleTextAttribute(hConsole, 2); // Green color for pause menu
 
     cout << "\n";
     cout << separator << endl; // Top border
@@ -258,7 +258,7 @@ void displayPauseMenu() {
     cout << "\n";
     cout << separator << endl; // Bottom border
 
-    SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); // Reset to default
+    SetConsoleTextAttribute(hConsole, 15); // Reset to default white
 }
 
 void displayHomeWindow() {
@@ -306,7 +306,7 @@ void displayHomeWindow() {
         }
     }
 
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+    SetConsoleTextAttribute(hConsole, 11); // Teal color
     cout << endl;
     cout << separator << endl; // Below title border
     cout << "\n";
@@ -339,7 +339,7 @@ void showScoreboard() {
     }
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+    SetConsoleTextAttribute(hConsole, 11); // Teal color
 
     cout << "\n\n";
     int consoleWidth = 50; // Adjust as needed
@@ -388,7 +388,7 @@ void showLeaderboard() {
     }
 
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY); // Teal color
+    SetConsoleTextAttribute(hConsole, 11); // Teal color
 
     cout << "\n\n";
     int consoleWidth = 50; // Adjust as needed
@@ -450,19 +450,19 @@ void displayColorTemplate(HANDLE hConsole, int originalColor) {
 
 void resetToDefault() {
     // Reset all customizable settings to their default values
-    borderColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // Default white
-    settledBlockColor = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY; // Default white
+    borderColor = 15; // Default white
+    settledBlockColor = 15; // Default white
     menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Default green
-    scoreDisplayColor = FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Default teal
+    scoreDisplayColor = 11; // Default teal
 
     tetrominoColors = {
-        FOREGROUND_BLUE | FOREGROUND_INTENSITY, // I
-        FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY, // T
-        FOREGROUND_RED | FOREGROUND_INTENSITY, // Z
-        FOREGROUND_GREEN | FOREGROUND_INTENSITY, // S
-        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_INTENSITY, // O
-        FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY, // L
-        FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_INTENSITY // J
+        9, // I
+        13, // T
+        12, // Z
+        10, // S
+        15, // O
+        14, // L
+        11 // J
     };
 
     cout << "All settings have been reset to default values.\n";
@@ -862,11 +862,7 @@ void gameLoop() {
                                         inPauseMenu = false;
                                         break;
                                     case 13: // Enter to Resume
-                                    case 'c': // Resume
-                                        system("cls"); // Clear the screen after choosing resume
-                                        inPauseMenu = false;
-                                        break;
-                                    case ' ': // Customize
+                                    case 'c': // Customize
                                         customizeGame();
                                         break;
                                     case 'b': // Back to Home
