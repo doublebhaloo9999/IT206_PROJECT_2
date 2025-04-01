@@ -639,12 +639,12 @@ void customizeGame() {
             case '4': {
                 // Change Home Window Text Color
                 system("cls");
-                SetConsoleTextAttribute(hConsole, customizationMenuTextColor); // Use the Customization Menu text color
+                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
                 cout << "Change Home Window Text Color\n";
                 cout << "=============================\n";
-                cout << "Current Color: " << homeWindowTextColor << "\n";
+                cout << "Current Color: " << menuTextColor << "\n";
                 cout << "Enter new color code (1-15) or '0' to go back: ";
-                displayColorTemplate(hConsole, customizationMenuTextColor);
+                displayColorTemplate(hConsole, menuTextColor);
                 int newColor;
                 cin >> newColor;
 
@@ -653,8 +653,8 @@ void customizeGame() {
                 }
 
                 if (newColor >= 1 && newColor <= 15) {
-                    homeWindowTextColor = newColor;
-                    cout << "\nHome Window text color updated successfully!\n";
+                    menuTextColor = newColor;
+                    cout << "\nHome window text color updated successfully!\n";
                 } else {
                     cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
                 }

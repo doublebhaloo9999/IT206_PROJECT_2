@@ -103,7 +103,6 @@ void placeTetrominoOnGrid() {
 
 // Add a global variable for speed adjustment
 int fallInterval = 500; // Default fall interval
-bool isSpeedDynamic = true; // Determines if speed changes dynamically
 
 // Modify clearFullLines to use linesPerSpeedIncrease
 void clearFullLines() {
@@ -116,14 +115,37 @@ void clearFullLines() {
             gameGrid.insert(gameGrid.begin(), vector<int>(GRID_WIDTH, 0));
 
             // Update score and track cleared lines
-            currentScore += 100;
+            switch (fallInterval){
+                case 600:
+                    currentScore += 50;     //Noob
+                    break;
+                case 500:
+                    currentScore += 100;    //Normal
+                    break;
+                case 350:
+                    currentScore += 150;    //Hard
+                    break;
+                case 200:
+                    currentScore += 200;    //Advanced
+                    break;
+                case 100:
+                    currentScore += 250;    //Expert
+                    break;
+                case 50:
+                    currentScore += 300;    //GrandMaster
+                    break;
+                default:    //default
+                    currentScore += 100;
+                    break;
+            }
+            // currentScore += 100;
             totalLinesCleared++;
 
             // Adjust speed dynamically based on cleared lines
-            if (isSpeedDynamic && totalLinesCleared % 5 == 0) {
-                currentLevel++;
-                fallInterval = max(50, 500 - (currentLevel - 1) * 50); // Minimum interval is 50ms
-            }
+            // if (isSpeedDynamic && totalLinesCleared % 5 == 0) {
+            //     currentLevel++;
+            //     fallInterval = max(50, 500 - (currentLevel - 1) * 50); // Minimum interval is 50ms
+            // }
 
             // Recheck the same row after shifting
             row++;
@@ -747,38 +769,38 @@ void customizeGame() {
                 char speedChoice = _getch();
                 switch (speedChoice) {
                     case '1': // GrandMaster
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 50; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to GrandMaster.\n";
                         break;
                     case '2': // Expert
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 100; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Expert.\n";
                         break;
                     case '3': // Advanced
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 200; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Advanced.\n";
                         break;
                     case '4': // Hard
-                        isSpeedDynamic = false;
-                        fallInterval = 400; // Set fixed fall interval
+                        // isSpeedDynamic = false;
+                        fallInterval = 350; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Hard.\n";
                         break;
                     case '5': // Normal
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 500; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Normal.\n";
                         break;
                     case '6': // Reset Default
-                        isSpeedDynamic = true;
+                        // isSpeedDynamic = true;
                         fallInterval = 500; // Reset to default fall interval
                         cout << "\nSpeed adjustment reset to Default.\n";
                         break;
                     case '7': // NOOB
-                        isSpeedDynamic = false;
-                        fallInterval = 500; // Constant speed
+                        // isSpeedDynamic = false;
+                        fallInterval = 600; // Constant speed
                         cout << "\nSpeed adjustment set to NOOB mode (constant speed).\n";
                         break;
                     case '8': // Back to Customization Menu
@@ -815,7 +837,6 @@ void gameLoop() {
 
     auto lastFrameTime = high_resolution_clock::now();
     auto lastFallTime = high_resolution_clock::now();
-    int fallInterval = 500 - (currentLevel - 1) * 50; // Initial fall interval
 
     bool isGameOver = false;
 
