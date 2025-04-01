@@ -99,10 +99,10 @@ void placeTetrominoOnGrid() {
     }
 }
 
-// Add a global variable for speed adjustment
-int fallInterval = 500; // Default fall interval
+
 // bool isSpeedDynamic = true; // Determines if speed changes dynamically
 
+int fallInterval = 500; // Default
 // Modify clearFullLines to use linesPerSpeedIncrease
 void clearFullLines() {
     // Clears full lines from the grid, updates the score, and adjusts speed dynamically
@@ -835,7 +835,7 @@ void gameLoop() {
 
     auto lastFrameTime = high_resolution_clock::now();
     auto lastFallTime = high_resolution_clock::now();
-    int fallInterval = 500 - (currentLevel - 1) * 50; // Initial fall interval
+    // int fallInterval = 500 - (currentLevel - 1) * 50; // Initial fall interval
 
     bool isGameOver = false;
 
