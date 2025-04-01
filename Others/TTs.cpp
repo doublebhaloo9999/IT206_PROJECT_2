@@ -1015,7 +1015,24 @@ void gameLoop() {
         } else if (key == 27) { // ESC key
             return; // Exit the game loop
         } else {
+            // Temporarily display the invalid input message
             cout << "\nInvalid input... Enter a valid key." << endl;
+            Sleep(1000); // Pause for 1 second to show the message
+            system("cls"); // Clear the screen
+            cout << border << endl << endl;
+            cout << u8"   ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗  \n";
+            cout << u8"  ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██║ \n";
+            cout << u8"  ██║  ███╗███████║██╔████╔██║█████╗      ██║   ██║██║   ██║█████╗  ██████╝ \n";
+            cout << u8"  ██║   ██║██╔══██║██║╚██╔╝██║██╔══╝      ██║   ██║██║   ██║██╔══╝  █████║  \n";
+            cout << u8"  ██║   ██║██╔══██║██║╚██╔╝██║██║         ██║   ██║██║   ██║██║     ██║ ██║    \n";
+            cout << u8"  ╚██████╔╝██║  ██║██║ ╚═╝ ██║███████╗    ╚██████╔╝╚██████╔╝███████╗██║  ██║   \n";
+            cout << u8"   ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚══▀▀═╝  ╚═════╝ ╚══════╝╚═╝  ╚═╝     \n";
+            cout << border << endl << endl;
+            cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
+            cout << string((consoleWidth - highScoreText.size()) / 2, ' ') << highScoreText << endl;
+            cout << "\n";
+            cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl;
+            cout << border << endl;
         }
     }
 }
