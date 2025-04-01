@@ -865,6 +865,9 @@ void gameLoop() {
                                         inPauseMenu = false;
                                         break;
                                     case 13: // Enter to Resume
+                                        system("cls"); // Clear the screen after choosing resume
+                                        inPauseMenu = false;
+                                        break;
                                     case 'c': // Customize
                                         customizeGame();
                                         break;
