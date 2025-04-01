@@ -25,6 +25,8 @@ int borderColor = 15; // Default white
 int settledBlockColor = 15; // Default white
 int menuTextColor = 3 ; // Teal color
 int scoreDisplayColor = 11; // Teal color
+int customizationMenuTextColor = 3; // Teal color
+int homeWindowTextColor = 3; // Teal color
 
 // Tetromino shapes and colors
 vector<vector<vector<int>>> tetrominoShapes = {
@@ -283,19 +285,17 @@ void displayHomeWindow() {
     TT    EEEEEE    TT    RR  RRR  IIIIII  SSSSSS
     )";
 
-// Calculate the padding for center alignment of ASCII art
+    // Calculate the padding for center alignment of ASCII art
     int paddingForArt = (consoleWidth - 70) / 2;  // Width of the ASCII art
     int leftMargin = 10; // Fixed left margin for options
 
-    
-    // Set the console text color to teal
-    SetConsoleTextAttribute(hConsole, 3); 
+    // Set the console text color to the Home Window text color
+    SetConsoleTextAttribute(hConsole, homeWindowTextColor);
 
     // Display the ASCII art in colorful parts
     cout << "\n";
-    SetConsoleTextAttribute(hConsole,11); // Teal color
+    SetConsoleTextAttribute(hConsole,homeWindowTextColor ); // Use the Home Window text color
     cout << separator << endl; // Top border
-
 
     // Display ASCII art with color-changing effect
     for (int i = 0; i < tetrisArt.length(); i++) {
@@ -308,7 +308,7 @@ void displayHomeWindow() {
         }
     }
 
-    SetConsoleTextAttribute(hConsole, 11); // Teal color
+    SetConsoleTextAttribute(hConsole, homeWindowTextColor ); // Reset to Home Window text color
     cout << endl;
     cout << separator << endl; // Below title border
     cout << "\n";
@@ -456,6 +456,7 @@ void resetToDefault() {
     settledBlockColor = 15; // Default white
     menuTextColor = FOREGROUND_GREEN | FOREGROUND_INTENSITY; // Default green
     scoreDisplayColor = 11; // Default teal
+    customizationMenuTextColor = 3; // Default teal
 
     tetrominoColors = {
         9, // I
@@ -479,7 +480,7 @@ void customizeGame() {
 
     while (true) {
         system("cls");
-        SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+        SetConsoleTextAttribute(hConsole, customizationMenuTextColor); // Use the Customization Menu text color
         cout << "\n\n";
         cout << "Customize Your Game\n";
         cout << "===================\n";
@@ -502,8 +503,7 @@ void customizeGame() {
             case '1': {
                 // Change Tetromino Colors
                 system("cls");
-                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                SetConsoleTextAttribute(hConsole, customizationMenuTextColor); // Use the Customization Menu text color
                 cout << "Change Tetromino Colors\n";
                 cout << "========================\n";
 
@@ -519,7 +519,7 @@ void customizeGame() {
                         }
                         cout << endl;
                     }
-                    SetConsoleTextAttribute(hConsole, menuTextColor); // Reset to menu text color
+                    SetConsoleTextAttribute(hConsole, customizationMenuTextColor); // Reset to Customization Menu text color
                     cout << endl;
                 }
 
@@ -535,7 +535,7 @@ void customizeGame() {
                     int index = colorChoice - 1;
                     cout << "\nCurrent Color: " << tetrominoColors[index] << "\n";
                     cout << "Enter new color code (1-15) or '0' to go back: ";
-                    displayColorTemplate(hConsole, menuTextColor);
+                    displayColorTemplate(hConsole, customizationMenuTextColor);
                     int newColor;
                     cin >> newColor;
 
@@ -618,12 +618,12 @@ void customizeGame() {
             case '4': {
                 // Change Home Window Text Color
                 system("cls");
-                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                SetConsoleTextAttribute(hConsole, customizationMenuTextColor); // Use the Customization Menu text color
                 cout << "Change Home Window Text Color\n";
                 cout << "=============================\n";
-                cout << "Current Color: " << menuTextColor << "\n";
+                cout << "Current Color: " << homeWindowTextColor << "\n";
                 cout << "Enter new color code (1-15) or '0' to go back: ";
-                displayColorTemplate(hConsole, menuTextColor);
+                displayColorTemplate(hConsole, customizationMenuTextColor);
                 int newColor;
                 cin >> newColor;
 
@@ -632,8 +632,8 @@ void customizeGame() {
                 }
 
                 if (newColor >= 1 && newColor <= 15) {
-                    menuTextColor = newColor;
-                    cout << "\nHome window text color updated successfully!\n";
+                    homeWindowTextColor = newColor;
+                    cout << "\nHome Window text color updated successfully!\n";
                 } else {
                     cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
                 }
@@ -670,12 +670,12 @@ void customizeGame() {
             case '6': {
                 // Change Customization Menu Text Color
                 system("cls");
-                SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
+                SetConsoleTextAttribute(hConsole, customizationMenuTextColor); // Use the current Customization Menu text color
                 cout << "Change Customization Menu Text Color\n";
                 cout << "====================================\n";
-                cout << "Current Color: " << menuTextColor << "\n";
+                cout << "Current Color: " << customizationMenuTextColor << "\n";
                 cout << "Enter new color code (1-15) or '0' to go back: ";
-                displayColorTemplate(hConsole, menuTextColor);
+                displayColorTemplate(hConsole, customizationMenuTextColor);
                 int newColor;
                 cin >> newColor;
 
@@ -684,8 +684,8 @@ void customizeGame() {
                 }
 
                 if (newColor >= 1 && newColor <= 15) {
-                    menuTextColor = newColor;
-                    cout << "\nCustomization menu text color updated successfully!\n";
+                    customizationMenuTextColor = newColor;
+                    cout << "\nCustomization Menu text color updated successfully!\n";
                 } else {
                     cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
                 }
