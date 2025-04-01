@@ -521,7 +521,8 @@ void customizeGame() {
                     cout << endl;
                 }
 
-                cout << tetrominoColors.size() + 1 << ". Back to Customization Menu\n";
+                cout << tetrominoColors.size() + 1 << ". Reset All Colors to Default\n";
+                cout << tetrominoColors.size() + 2 << ". Back to Customization Menu\n";
                 cout << "========================\n";
                 cout << "Enter your choice: ";
 
@@ -547,12 +548,17 @@ void customizeGame() {
                         cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
                     }
                 } else if (colorChoice == 8) {
+                    // Reset all Tetromino colors to default
+                    tetrominoColors = {9, 13, 12, 10, 15, 14, 11}; // Default colors
+                    cout << "\nAll Tetromino colors have been reset to default values.\n";
+                    Sleep(1000); // Pause for 1 second to show the message
+                } else if (colorChoice == 9) {
                     break; // Back to customization menu
                 } else {
                     cout << "\nInvalid choice. Please try again.\n";
+                    Sleep(1000); // Pause for 1 second to show the error
                 }
 
-                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case '2': {

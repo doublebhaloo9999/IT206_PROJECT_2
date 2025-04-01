@@ -1,3 +1,7 @@
+DEv 99900
+Diluc 6900
+goldDigger 6000
+KissChan 2500
 Oppai 1100
 UNKNOWN 1000
 UNKNOWN 900
