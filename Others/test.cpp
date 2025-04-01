@@ -293,7 +293,9 @@ void displayHomeWindow() {
 
     // Display the ASCII art in colorful parts
     cout << "\n";
+    SetConsoleTextAttribute(hConsole,11); // Teal color
     cout << separator << endl; // Top border
+
 
     // Display ASCII art with color-changing effect
     for (int i = 0; i < tetrisArt.length(); i++) {
@@ -994,7 +996,7 @@ void gameLoop() {
 
     string scoreText = "Your Score: " + to_string(currentScore);
     string highScoreText = (currentScore > personalHighScore) ? "New High Score: " + to_string(currentScore) + "!" : "High Score: " + to_string(personalHighScore);
-    string exitText = "Press Enter to replay or any key to exit...";
+    string exitText = "Press Enter to replay or Esc key to exit...";
 
     cout << "\n";
     cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
@@ -1003,12 +1005,17 @@ void gameLoop() {
     cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl;
     cout << border << endl; // Add a border line after "Press any key to exit..."
 
-    char key = _getch(); // Wait for user input
-    if (key == 13) { // Enter key
-        system("cls"); // Clear the screen
-        startGame(false); // Replay the game in Quickie mode
-    } else {
-        system("cls"); // Clear the screen and return to the home window
+    while (true) { // Loop until valid input is received
+        char key = _getch(); // Wait for user input
+        if (key == 13) { // Enter key
+            system("cls"); // Clear the screen
+            startGame(false); // Replay the game in Quickie mode
+            break;
+        } else if (key == 27) { // ESC key
+            return; // Exit the game loop
+        } else {
+            cout << "\nInvalid input... Enter a valid key." << endl;
+        }
     }
 }
 
