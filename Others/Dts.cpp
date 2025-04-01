@@ -912,39 +912,39 @@ void gameLoop() {
     // Animated "Game Over" sequence in blood red color
     const string FRAME_PART1 = 
         "\n"
-        "        .-''''''''-.  \n"
-        "       /            \\  \n"
-        "      |              |  \n"
-        "      |,  .-.  .-.  ,|  \n"
-        "      | )(_o/   \\o_)(|  \n"
-        "      |/     /\\    \\|   \n"
-        "      (_     ^^     _)  \n"
-        "       \\__|IIIIII|__/  \n"
-        "        |\\       | |    \n"
-        "        | \\IIIIIII |  \n"
-        "        \\  ~  ~   /\"\"/  \n"
-        "         `--------`  \n";
-
-    const string FRAME_PART2 = 
-        "\n"
-        "        .-''''''''''-.   \n"
-        "       /              \\  \n"
+        "        .-'''''''''-.  \n"
+        "       /             \\  \n"
         "      |               |  \n"
         "      |,  .-.  .-.  , |  \n"
         "      | )(_o/  \\o_)( |  \n"
-        "      |/     /\\      \\|  \n"
-        "      (_     ^^      _)  \n"
-        "       \\__|IIIIII|__/  \n"
-        "        |  \\IIIIII/ |  \n"
-        "        \\         /\"\"/  \n"
-        "         `----------`  \n";
+        "      |/     /\\    \\""|   \n"
+        "      (_     ^^     _)|  \n"
+        "       \\__|IIIIII|__/""/  \n"
+        "        |\\       | |    \n"
+        "        | \\IIIIIII |  \n"
+        "        \\         /""/  \n"
+        "         `---------`  \n";
+
+    const string FRAME_PART2 = 
+    "\n"
+    "        .-'''''''''-.  \n"
+    "       /             \\  \n"
+    "      |               |  \n"
+    "      |,  .-.  .-.  , |  \n"
+    "      | )(_o/  \\o_)( |  \n"
+    "      |/     /\\    \\""|   \n"
+    "      (_     ^^     _)|  \n"
+    "       \\__|IIIIII|__/""/  \n"
+    "        | \\IIIIIII |  \n"
+    "        \\         /""/  \n"
+    "         `---------`  \n";
 
     string frames[] = {FRAME_PART1, FRAME_PART2, FRAME_PART1, FRAME_PART2};
     for (int i = 0; i < 10; i++) { // Loop animation
         system("cls");
         SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY); // Blood red color
         cout << frames[i % 4] << endl;
-        Sleep(600); // Pause for 600ms
+        Sleep(200); // Pause for 100ms
     }
 
     // Smooth transition to Game Over screen
