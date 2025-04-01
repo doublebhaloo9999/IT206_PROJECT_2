@@ -62,7 +62,7 @@ void resetGameState() {
 }
 
 void initialize() {
-    int index = rand() % tetrominos.size();
+    int index = rand() % tetrominos.size(); 
     currentTetromino.shape = tetrominos[index];
     currentTetromino.x = width / 2 - currentTetromino.shape[0].size() / 2;
     currentTetromino.y = 0;
@@ -399,6 +399,7 @@ void showLeaderboard() {
                  << " | " << score << string(5 - score.size(), ' ') << " |" << endl; // Align score
         }
         cout << "+------+-----------------+-------+" << endl;
+        cout << separator << endl;
     }
 
     cout << "\n";
