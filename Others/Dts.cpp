@@ -279,8 +279,8 @@ void displayHomeWindow() {
   TTTTTT  EEEEEE  TTTTTT  RRRRRR   IIIIII  SSSSSS
     TT    EE        TT    RR   RR    II    SS
     TT    EEEEE     TT    RRRRRR     II    SSSSSS
-    TT    EE        TT    RR RR      II        SS
-    TT    EEEEEE    TT    RR RRR   IIIIII  SSSSSS
+    TT    EE        TT    RR  RR     II        SS
+    TT    EEEEEE    TT    RR  RRR  IIIIII  SSSSSS
     )";
 
 // Calculate the padding for center alignment of ASCII art
