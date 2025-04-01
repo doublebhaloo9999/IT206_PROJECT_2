@@ -101,7 +101,7 @@ void placeTetrominoOnGrid() {
 
 // Add a global variable for speed adjustment
 int fallInterval = 500; // Default fall interval
-bool isSpeedDynamic = true; // Determines if speed changes dynamically
+// bool isSpeedDynamic = true; // Determines if speed changes dynamically
 
 // Modify clearFullLines to use linesPerSpeedIncrease
 void clearFullLines() {
@@ -114,14 +114,37 @@ void clearFullLines() {
             gameGrid.insert(gameGrid.begin(), vector<int>(GRID_WIDTH, 0));
 
             // Update score and track cleared lines
-            currentScore += 100;
+            switch (fallInterval){
+                case 600:
+                    currentScore += 50;     //Noob
+                    break;
+                case 500:
+                    currentScore += 100;    //Normal
+                    break;
+                case 350:
+                    currentScore += 150;    //Hard
+                    break;
+                case 200:
+                    currentScore += 200;    //Advanced
+                    break;
+                case 100:
+                    currentScore += 250;    //Expert
+                    break;
+                case 50:
+                    currentScore += 300;    //GrandMaster
+                    break;
+                default:    //default
+                    currentScore += 100;
+                    break;
+            }
+            // currentScore += 100;
             totalLinesCleared++;
 
             // Adjust speed dynamically based on cleared lines
-            if (isSpeedDynamic && totalLinesCleared % 5 == 0) {
-                currentLevel++;
-                fallInterval = max(50, 500 - (currentLevel - 1) * 50); // Minimum interval is 50ms
-            }
+            // if (isSpeedDynamic && totalLinesCleared % 5 == 0) {
+            //     currentLevel++;
+            //     fallInterval = max(50, 500 - (currentLevel - 1) * 50); // Minimum interval is 50ms
+            // }
 
             // Recheck the same row after shifting
             row++;
@@ -283,7 +306,7 @@ void displayHomeWindow() {
     TT    EEEEEE    TT    RR  RRR  IIIIII  SSSSSS
     )";
 
-// Calculate the padding for center alignment of ASCII art
+    // Calculate the padding for center alignment of ASCII art
     int paddingForArt = (consoleWidth - 70) / 2;  // Width of the ASCII art
     int leftMargin = 10; // Fixed left margin for options
 
@@ -500,13 +523,29 @@ void customizeGame() {
             case '1': {
                 // Change Tetromino Colors
                 system("cls");
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
                 SetConsoleTextAttribute(hConsole, menuTextColor); // Use the current menu text color
                 cout << "Change Tetromino Colors\n";
                 cout << "========================\n";
+
+                // Display each Tetromino with its shape and current color
                 for (int i = 0; i < tetrominoColors.size(); ++i) {
                     cout << i + 1 << ". Tetromino " << char('I' + i) << " (Current Color: " << tetrominoColors[i] << ")\n";
+
+                    // Display the shape of the Tetromino in its current color
+                    SetConsoleTextAttribute(hConsole, tetrominoColors[i]); // Set the color of the Tetromino
+                    for (const auto& row : tetrominoShapes[i]) {
+                        for (int cell : row) {
+                            cout << (cell ? "■ " : "  "); // Use "■" for blocks and spaces for empty cells
+                        }
+                        cout << endl;
+                    }
+                    SetConsoleTextAttribute(hConsole, menuTextColor); // Reset to menu text color
+                    cout << endl;
                 }
-                cout << tetrominoColors.size() + 1 << ". Back to Customization Menu\n";
+
+                cout << tetrominoColors.size() + 1 << ". Reset All Colors to Default\n";
+                cout << tetrominoColors.size() + 2 << ". Back to Customization Menu\n";
                 cout << "========================\n";
                 cout << "Enter your choice: ";
 
@@ -532,12 +571,17 @@ void customizeGame() {
                         cout << "\nInvalid color code. Please enter a value between 1 and 15.\n";
                     }
                 } else if (colorChoice == 8) {
+                    // Reset all Tetromino colors to default
+                    tetrominoColors = {9, 13, 12, 10, 15, 14, 11}; // Default colors
+                    cout << "\nAll Tetromino colors have been reset to default values.\n";
+                    Sleep(1000); // Pause for 1 second to show the message
+                } else if (colorChoice == 9) {
                     break; // Back to customization menu
                 } else {
                     cout << "\nInvalid choice. Please try again.\n";
+                    Sleep(1000); // Pause for 1 second to show the error
                 }
 
-                Sleep(1000); // Pause for 1 second to show the message
                 break;
             }
             case '2': {
@@ -723,38 +767,38 @@ void customizeGame() {
                 char speedChoice = _getch();
                 switch (speedChoice) {
                     case '1': // GrandMaster
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 50; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to GrandMaster.\n";
                         break;
                     case '2': // Expert
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 100; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Expert.\n";
                         break;
                     case '3': // Advanced
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 200; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Advanced.\n";
                         break;
                     case '4': // Hard
-                        isSpeedDynamic = false;
-                        fallInterval = 400; // Set fixed fall interval
+                        // isSpeedDynamic = false;
+                        fallInterval = 350; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Hard.\n";
                         break;
                     case '5': // Normal
-                        isSpeedDynamic = false;
+                        // isSpeedDynamic = false;
                         fallInterval = 500; // Set fixed fall interval
                         cout << "\nSpeed adjustment set to Normal.\n";
                         break;
                     case '6': // Reset Default
-                        isSpeedDynamic = true;
+                        // isSpeedDynamic = true;
                         fallInterval = 500; // Reset to default fall interval
                         cout << "\nSpeed adjustment reset to Default.\n";
                         break;
                     case '7': // NOOB
-                        isSpeedDynamic = false;
-                        fallInterval = 500; // Constant speed
+                        // isSpeedDynamic = false;
+                        fallInterval = 600; // Constant speed
                         cout << "\nSpeed adjustment set to NOOB mode (constant speed).\n";
                         break;
                     case '8': // Back to Customization Menu
@@ -864,7 +908,7 @@ void gameLoop() {
                                         system("cls"); // Clear the screen after choosing restart
                                         inPauseMenu = false;
                                         break;
-                                    case 13: // Enter to Resume
+                                    case 13: // Enter key to Resume
                                         system("cls"); // Clear the screen after choosing resume
                                         inPauseMenu = false;
                                         break;
