@@ -778,6 +778,9 @@ void customizeGame() {
     }
 }
 
+// Forward declaration for startGame
+void startGame(bool isAdvancedMode);
+
 // Game logic
 void gameLoop() {
     system("cls"); // Clear the terminal before starting the game
@@ -967,7 +970,7 @@ void gameLoop() {
 
     string scoreText = "Your Score: " + to_string(currentScore);
     string highScoreText = (currentScore > personalHighScore) ? "New High Score: " + to_string(currentScore) + "!" : "High Score: " + to_string(personalHighScore);
-    string exitText = "Press any key to return to the home window...";
+    string exitText = "Press Enter to replay or any key to exit...";
 
     cout << "\n";
     cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
@@ -976,8 +979,13 @@ void gameLoop() {
     cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl;
     cout << border << endl; // Add a border line after "Press any key to exit..."
 
-    _getch(); // Wait for user input
-    system("cls"); // Clear the screen and return to the home window
+    char key = _getch(); // Wait for user input
+    if (key == 13) { // Enter key
+        system("cls"); // Clear the screen
+        startGame(false); // Replay the game in Quickie mode
+    } else {
+        system("cls"); // Clear the screen and return to the home window
+    }
 }
 
 void updateLeaderboard(int finalScore, bool advancedMode) {
