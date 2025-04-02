@@ -146,6 +146,8 @@ void clearFullLines() {
     }
 }
 
+// Rotates the active tetromino clockwise
+
 void rotateActiveTetromino() {
     // Rotates the current Tetromino clockwise
     vector<vector<int>> rotatedShape(activeTetromino.shape[0].size(), vector<int>(activeTetromino.shape.size()));
@@ -161,6 +163,24 @@ void rotateActiveTetromino() {
         activeTetromino.shape = rotatedShape;
     }
 }
+
+// Rotates the active tetromino anti clockwise
+
+// void rotateActiveTetromino() {
+//     // Rotates the current Tetromino anti-clockwise
+//     vector<vector<int>> rotatedShape(activeTetromino.shape[0].size(), vector<int>(activeTetromino.shape.size()));
+
+//     for (int row = 0; row < activeTetromino.shape.size(); ++row) {
+//         for (int col = 0; col < activeTetromino.shape[row].size(); ++col) {
+//             rotatedShape[activeTetromino.shape[row].size() - 1 - col][row] = activeTetromino.shape[row][col];
+//         }
+//     }
+
+//     // Apply rotation only if it doesn't cause a collision
+//     if (!isCollision(activeTetromino.x, activeTetromino.y, rotatedShape)) {
+//         activeTetromino.shape = rotatedShape;
+//     }
+// }
 
 // Drawing and rendering functions
 void draw(HANDLE hConsole, COORD bufferSize, CHAR_INFO* buffer) {
