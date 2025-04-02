@@ -109,6 +109,13 @@ This project is a modern take on the classic **Tetris** game, designed for the c
 
 ---
 
+## 📺 Tutorial
+
+If you'd like to learn more about how this project was built or want a step-by-step guide, check out this tutorial on YouTube:  
+[![Tetris Game Tutorial](https://img.youtube.com/vi/wb8PXUXjvYM/0.jpg)](https://youtu.be/wb8PXUXjvYM)
+
+---
+
 ## ⚙️ Technical Details
 
 - **Language**: C++
