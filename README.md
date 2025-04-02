@@ -1,93 +1,132 @@
-# Tetris Game Project
+# Tetris Game - Data Structures and OOP Project
 
-This project is a console-based implementation of the classic **Tetris** game, written in C++. It features customizable gameplay, dynamic speed adjustments, and a leaderboard system to track high scores.
+Welcome to **Tetris**, a modern take on the classic block-stacking game! This project is developed as part of the **Data Structures and Object-Oriented Programming (OOP)** course. It showcases the application of advanced programming concepts, teamwork, and creativity.
 
-## Features
+---
 
-- **Game Modes**:
-  - **Quickie Mode**: A casual mode for quick gameplay.
-  - **Advanced Mode**: A competitive mode with leaderboard tracking.
-- **Dynamic Speed**: The game speed increases as you clear more lines.
-- **Customization**:
+## 🎮 About the Game
+
+Tetris is a tile-matching puzzle game where players manipulate falling Tetrominoes to clear lines and score points. This version of Tetris includes exciting features such as:
+
+- **Multiple Game Modes**:
+  - **Quickie Mode**: A fast-paced game for casual players.
+  - **Advanced Mode**: A challenging mode with leaderboard integration.
+- **Dynamic Gameplay**:
+  - Adjustable falling speeds for different difficulty levels.
+  - Rotatable Tetrominoes with collision detection.
+- **Customization Options**:
   - Change colors for Tetrominoes, borders, and text.
-  - Adjust game speed with predefined difficulty levels.
+  - Reset settings to default with ease.
 - **Leaderboard**:
-  - Tracks top scores for Advanced Mode.
-  - Allows players to save their scores with usernames.
-- **Pause Menu**:
-  - Options to restart, resume, customize, or return to the home screen.
-- **Game Over Animation**: A visually appealing "Game Over" sequence.
+  - Tracks top scores and player names.
+  - Separate leaderboards for Quickie and Advanced modes.
 
-## Controls
+---
 
-- **Arrow Keys**:
-  - Left: Move Tetromino left.
-  - Right: Move Tetromino right.
-  - Down: Move Tetromino down.
-  - Up: Rotate Tetromino.
-- **W/A/S/D**: Alternative controls for movement and rotation.
-- **Spacebar**: Instantly drop the Tetromino.
-- **Enter**: Open the pause menu.
-- **ESC**: Open the pause menu or exit the game.
+## 🛠️ Features and Highlights
 
-## Customization Options
+### 1. **Object-Oriented Design**
+- The game leverages OOP principles such as encapsulation, inheritance, and polymorphism.
+- Tetrominoes are represented as objects with properties like shape, position, and color.
 
-- Change colors for:
-  - Tetrominoes
-  - Borders
-  - Settled blocks
-  - Text in menus and score displays
-- Adjust game speed with difficulty levels:
-  - GrandMaster, Expert, Advanced, Hard, Normal, NOOB
-- Reset all settings to default.
+### 2. **Data Structures**
+- **2D Vectors**: Used to represent the game grid and Tetromino shapes.
+- **Vectors of Pairs**: Manage leaderboard entries efficiently.
+- **Sorting Algorithms**: Sort leaderboard scores dynamically.
 
-## How to Run
+### 3. **User Interface**
+- **Console-based UI**: Simple yet visually appealing interface with ASCII art and color-coded elements.
+- **Interactive Menus**: Navigate through the game modes, customization options, and leaderboard seamlessly.
 
-1. **Prerequisites**:
-   - A Windows system with a C++ compiler (e.g., MinGW or Visual Studio).
-   - Console support for ANSI escape codes (for color rendering).
+### 4. **File Handling**
+- Persistent storage for leaderboard data using text files.
+- Load and save high scores automatically.
 
-2. **Compile the Code**:
-   Use a C++ compiler to compile the `test.cpp` file. For example:
+---
+
+## 🚀 How to Play
+
+1. **Start the Game**:
+   - Run the program and choose a game mode from the home menu.
+2. **Controls**:
+   - **Arrow Keys**: Move Tetrominoes left, right, or down.
+   - **Up Arrow**: Rotate Tetromino.
+   - **Spacebar**: Drop Tetromino instantly.
+   - **ESC/Enter**: Pause the game and access the menu.
+3. **Objective**:
+   - Clear as many lines as possible by stacking Tetrominoes efficiently.
+   - Avoid letting the blocks reach the top of the grid.
+
+---
+
+## 🎨 Customization
+
+Make the game your own by customizing:
+- Tetromino colors.
+- Border and text colors.
+- Falling speed (difficulty levels: Noob, Normal, Hard, Expert, GrandMaster).
+
+---
+
+## 🏆 Leaderboard
+
+Compete with friends and track your progress:
+- **Quickie Mode**: Enter your name to save your score.
+- **Advanced Mode**: Automatically updates the leaderboard with your username.
+
+---
+
+## 👥 Team Members
+
+This project is a collaborative effort by a group of dedicated students. Each member contributed to different aspects of the game, including design, coding, testing, and documentation.
+
+- **[Member 1 Name]**: Lead Developer
+- **[Member 2 Name]**: UI/UX Designer
+- **[Member 3 Name]**: File Handling and Leaderboard Integration
+- **[Member 4 Name]**: Gameplay Mechanics and Testing
+
+---
+
+## 📚 Course Context
+
+This project is part of the **Data Structures and Object-Oriented Programming (OOP)** course. It demonstrates:
+- Practical application of data structures like vectors and 2D arrays.
+- Implementation of OOP principles in a real-world scenario.
+- Team collaboration and problem-solving skills.
+
+---
+
+## 💻 How to Run
+
+1. Clone the repository:
    ```bash
-   g++ -o tetris test.cpp
+   git clone https://github.com/your-repo/IT206_PROJECT_2.git
    ```
+2. Compile the code using a C++ compiler (e.g., g++ or Visual Studio).
+3. Run the executable file and enjoy the game!
 
-3. **Run the Game**:
-   Execute the compiled binary:
-   ```bash
-   ./tetris
-   ```
+---
 
-4. **Gameplay**:
-   - Select a mode from the home screen.
-   - Use the controls to play the game.
-   - Customize settings or view the leaderboard as needed.
+## 📂 File Structure
 
-## File Structure
+- **`TTs.cpp`**: Main game logic and implementation.
+- **`leaderboard.txt`**: Stores leaderboard data.
+- **`README.md`**: Project documentation.
 
-- **test.cpp**: The main source code for the game.
-- **leaderboard.txt**: Stores the leaderboard data.
-- **highscore.txt**: Stores personal high scores.
+---
 
-## Known Issues
+## 📝 Future Enhancements
 
-- The game is designed for Windows and may not work on other operating systems due to dependencies like `windows.h` and `conio.h`.
-- Console resizing may affect the display layout.
+- Add multiplayer support.
+- Implement graphical UI using a library like SDL or SFML.
+- Introduce power-ups and special Tetrominoes.
 
-## Future Enhancements
+---
 
-- Add support for multiplayer mode.
-- Implement sound effects and background music.
-- Port the game to other platforms (e.g., Linux, macOS).
+## 📧 Contact
 
-## License
+For any questions or feedback, feel free to reach out to the team at **[your-email@example.com]**.
 
-This project is for educational purposes and is not intended for commercial use.
+---
 
-## Acknowledgments
-
-- ASCII art and color effects inspired by various online resources.
-- Classic Tetris gameplay mechanics.
-
-Enjoy the game!
+**Enjoy the game and happy coding!**
