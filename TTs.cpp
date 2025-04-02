@@ -848,17 +848,23 @@ void gameLoop() {
                         case 75: // Left arrow key
                             if (!isCollision(activeTetromino.x - 1, activeTetromino.y, activeTetromino.shape)) {
                                 activeTetromino.x--;
-                            }
+                            } 
+                            // else if (activeTetromino.x == 0) { // Wrap to the right side
+                            //     activeTetromino.x = GRID_WIDTH - activeTetromino.shape[0].size();
+                            // }
                             break;
                         case 77: // Right arrow key
                             if (!isCollision(activeTetromino.x + 1, activeTetromino.y, activeTetromino.shape)) {
                                 activeTetromino.x++;
-                            }
+                            } 
+                            // else if (activeTetromino.x + activeTetromino.shape[0].size() >= GRID_WIDTH) { // Wrap to the left side
+                            //     activeTetromino.x = 0;
+                            // }
                             break;
                         case 80: // Down arrow key
                             if (!isCollision(activeTetromino.x, activeTetromino.y + 1, activeTetromino.shape)) {
                                 activeTetromino.y++;
-                            }
+                            } 
                             break;
                         case 72: // Up arrow key
                             rotateActiveTetromino();
