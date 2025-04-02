@@ -1039,6 +1039,8 @@ void gameLoop() {
             cout << "\nInvalid input... Enter a valid key." << endl;
             Sleep(1000); // Pause for 1 second to show the message
             system("cls"); // Clear the screen
+            cout << "\n\n";
+            cout << border << endl << endl ;
             cout << border << endl << endl;
             cout << u8"   ██████╗  █████╗ ███╗   ███╗███████╗     ██████╗ ██╗   ██╗███████╗██████╗  \n";
             cout << u8"  ██╔════╝ ██╔══██╗████╗ ████║██╔════╝    ██╔═══██╗██║   ██║██╔════╝██╔══██║ \n";
