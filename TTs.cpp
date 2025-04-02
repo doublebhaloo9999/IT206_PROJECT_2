@@ -1043,7 +1043,7 @@ void gameLoop() {
     cout << string((consoleWidth - scoreText.size()) / 2, ' ') << scoreText << endl;
     cout << string((consoleWidth - highScoreText.size()) / 2, ' ') << highScoreText << endl;
     cout << "\n";
-    cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl;
+    cout << string((consoleWidth - exitText.size()) / 2, ' ') << exitText << endl << endl;
     cout << border << endl; // Add a border line after "Press any key to exit..."
 
     while (true) { // Loop until valid input is received
